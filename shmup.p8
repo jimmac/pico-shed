@@ -54,6 +54,15 @@ function startgame()
 	flame=4
 	
 	--starfield
+	stars={}
+	for i=1,100 do
+		local newstar={}
+		newstar.x=flr(rnd(128))
+		newstar.y=flr(rnd(128))
+		newstar.s=rnd(1.5)+0.5
+		add(stars,newstar)
+	end
+	
 	starsx={} starsy={}
 	starss={}
 	for i=1,100 do
@@ -68,33 +77,6 @@ end
 -->8
 --tools
 
-function starfield()
-  for i=1,#starsx do
-   --flicker color
-   local col
-   if starss[i]>1.9 then
-   	col=7
-   elseif starss[i]>1.7 then
-    col=6
-   else
-    col=13
-   end
-   --render  
-			if col==7 then
-				line(starsx[i],starsy[i],
-				     starsx[i],starsy[i]-1,
-				     col)
-			else
-				pset(starsx[i],starsy[i],col)
-			end
-			--movement
-			if (starsy[i]<128) then
-				starsy[i]+=starss[i]
-			else
-				starsy[i]=0
-			end
-		end
-end
 
 function menu ()
   --score
@@ -160,6 +142,9 @@ end
 -->8
 --update
 function update_game()
+ --starfield
+ update_stars()
+ 
 	--flame
 	flame=4+rnd(3)
 
@@ -215,6 +200,18 @@ function update_end()
 		mode="start"
 	end
 end
+
+function update_stars()
+  for i=1,#stars do
+  	local mystar=stars[i] --reference
+  	
+  	mystar.y=mystar.y+mystar.s
+  	if mystar.y>128 then
+  	  mystar.y=mystar.y-128
+  	end
+  end 
+end
+
 -->8
 --draw
 
@@ -222,7 +219,7 @@ function draw_game()
 	cls(0)
 	fr+=1
 	--starfield
-	starfield()
+	draw_stars()
 
 	--player
 	spr(pl.sp,pl.x,pl.y)
@@ -262,6 +259,22 @@ function draw_end()
 	print("press any button", 34,101,1)	
 	print("press any button", 34,100,blink())
 end
+
+function draw_stars()
+  for i=1,#stars do
+  	local mystar=stars[i]
+  	local scol=6
+  	
+  	if mystar.s<1 then
+  		scol=1
+  	elseif mystar.s<1.5 then
+  		scol=13
+  	end
+  	
+  	pset(mystar.x,mystar.y,scol)
+  end
+end
+
 __gfx__
 00000000000660000006600000066000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000000007d0000007600000076000000000000000000000000000000000000282820002828200000000000000000000000000000000000000000000000000
