@@ -7,6 +7,7 @@ __lua__
 function _init()
  fr=0
  score=0
+ flash=0
 	--player
 	pl = {x=63,
 	      y=100,
@@ -65,6 +66,7 @@ function _update60()
 		bl.life=30
 		bl.x=pl.x
 		bl.y=pl.y-3
+		flash=3
 	end
 	if bl.y>0 then
 		bl.y-=5
@@ -81,7 +83,8 @@ function _draw()
 	--player
 	spr(pl.sp,pl.x,pl.y)
 	spr(flame,pl.x,pl.y+6)
-	--bullet
+	--shooting & bullet
+	bang()
 	if bl.life>0 then spr(16,bl.x,bl.y) end
 
  --menu
@@ -117,6 +120,13 @@ function menu ()
   for i=0,4 do --5 lives
 	  if i<pl.lv then h=33 else h=32 end
 	  spr(h,i*6)
+  end
+end
+-->8
+function bang()
+  if flash>0 then
+    circfill(pl.x+3,pl.y-3,flash,7)
+    flash-=1
   end
 end
 __gfx__
