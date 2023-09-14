@@ -44,22 +44,30 @@ function startgame()
 	mode="game"
 	flash=0
 	--player
-	pl = {x=63,
-	      y=100,
-	      spx=0,
-	      spy=0,
-	      spr=2,
-	      lv=2}
-	flame=4
+	pl = {}
+	pl.x=63
+	pl.y=100
+	pl.spx=0
+	pl.spy=0 --speed
+	pl.spr=2
+	pl.lv=2 --number of lives
+	flame=4 --spr of flame
+	
 	bl={} --bulets
 	
 	en={} --enemies
 	
-	local myen={}
-	myen.x=60
-	myen.y=16
-	myen.spr=20
-	add(en,myen)
+	for i=1,7 do
+		for j=1,3 do
+			local myen={}
+			myen.x=(i-1)*16+12
+			myen.y=16*j
+			myen.spy=.2
+			myen.spx=0
+			myen.spr=20+rnd(3)
+			add(en,myen)
+		end
+	end
 	
 	--starfield
 	stars={}
@@ -176,7 +184,7 @@ function update_game()
 	
 	--moving enemies
 	for myen in all(en) do
-		myen.y+=.2
+		myen.y+=myen.spy
 		myen.spr+=.1 --wtf works
 		if myen.spr>=24 then
 			myen.spr=20
