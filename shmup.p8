@@ -133,9 +133,9 @@ function splat()
  local tbl={}
  for i=1,20 do
 	 tbl[i]={}
- 	tbl[i]["x"]=60-rnd(40)+rnd(40)
- 	tbl[i]["y"]=45-rnd(20)+rnd(20)
- 	tbl[i]["r"]=4+rnd(8)
+ 	tbl[i].x=60-rnd(40)+rnd(40)
+ 	tbl[i].y=45-rnd(20)+rnd(20)
+ 	tbl[i].r=4+rnd(8)
  end
  
 	return tbl
@@ -147,9 +147,9 @@ function draw_logo(l)
  jitter=1
  
  for i=1,#splat do
- 	circfill(splat[i]["x"]*jitter,
- 	         splat[i]["y"]*jitter,
- 	         splat[i]["r"],
+ 	circfill(splat[i].x*jitter,
+ 	         splat[i].y*jitter,
+ 	         splat[i].r,
  	         8)
  end
 	if l==1 then
@@ -232,7 +232,7 @@ function draw_game()
 	bang()
 	if bl.life>0 then spr(16,bl.x,bl.y) end
 
- --menu
+ --top menu
  menu()
 end
 
