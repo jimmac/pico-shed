@@ -16,7 +16,7 @@ function _init()
 	      spx=0,
 	      spy=0,
 	      sp=2,
-	      lv=4}
+	      lv=2}
 	bl = {x=0,y=-10,life=30}
 	flame=4
 	cls(0)
@@ -30,9 +30,69 @@ function _init()
 	  add(starsy,rnd(128))
 	  add(starss,rnd(1.5)+0.5)
 	end
+	
+	mode="start"
+	--mode="game"
 end
 
-function _update60()
+function _update60 ()
+  if mode=="game" then
+	  update_game()
+	 else
+	 --start
+	 	update_start()
+	 end
+end
+
+function _draw ()
+  if mode=="game" then
+	  draw_game()
+	 else
+	 --start
+	 	draw_start()
+	 end
+end
+-->8
+function starfield()
+  for i=1,#starsx do
+   --flicker color
+   local col
+   if starss[i]>1.9 then
+   	col=7
+   elseif starss[i]>1.7 then
+    col=6
+   else
+    col=13
+   end
+   --render  
+			if col==7 then
+				line(starsx[i],starsy[i],
+				     starsx[i],starsy[i]-1,
+				     col)
+			else
+				pset(starsx[i],starsy[i],col)
+			end
+			--movement
+			if (starsy[i]<128) then
+				starsy[i]+=starss[i]
+			else
+				starsy[i]=0
+			end
+		end
+end
+
+function menu ()
+  --score
+  print("score: "..score,50,1,6)
+  --lives
+  for i=0,4 do --5 lives
+	  if i<pl.lv then h=9 else h=8 end
+	  spr(h,i*6)
+  end
+end
+-->8
+--update
+function update_game()
 	--flame
 	flame=4+rnd(3)
 
@@ -76,7 +136,16 @@ function _update60()
 	bl.life-=1
 end
 
-function _draw()
+
+function update_start()
+	if btnp(❎) or btnp(🅾️) then
+		mode="game"
+	end
+end
+-->8
+--draw
+
+function draw_game()
 	cls(0)
 	fr+=1
 	--starfield
@@ -93,43 +162,14 @@ function _draw()
  --menu
  menu()
 end
--->8
-function starfield()
-  for i=1,#starsx do
-   --flicker color
-   local col
-   if starss[i]>1.9 then
-   	col=7
-   elseif starss[i]>1.7 then
-    col=6
-   else
-    col=13
-   end
-   --render  
-			if col==7 then
-				line(starsx[i],starsy[i],
-				     starsx[i],starsy[i]-1,
-				     col)
-			else
-				pset(starsx[i],starsy[i],col)
-			end
-			--movement
-			if (starsy[i]<128) then
-				starsy[i]+=starss[i]
-			else
-				starsy[i]=0
-			end
-		end
-end
 
-function menu ()
-  --score
-  print("score: "..score,50,1,6)
-  --lives
-  for i=0,4 do --5 lives
-	  if i<pl.lv then h=8 else h=9 end
-	  spr(h,i*6)
-  end
+function draw_start()
+	cls(2)
+	print("\14 shmup",45,41,1)
+	print("\14 shmup",45,40,7)
+	
+	print("press any button\
+    to start", 30,70,13)
 end
 -->8
 function bang()
@@ -138,6 +178,7 @@ function bang()
     flash-=1
   end
 end
+
 __gfx__
 00000000000660000006600000066000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000000007d0000007600000076000000000000000000000000000000000000282820002828200000000000000000000000000000000000000000000000000
