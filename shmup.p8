@@ -48,7 +48,7 @@ function startgame()
 	      y=100,
 	      spx=0,
 	      spy=0,
-	      sp=2,
+	      spr=2,
 	      lv=2}
 	flame=4
 	bl={} --bulets
@@ -134,7 +134,10 @@ function draw_logo(l)
 	if l==1 then
 		 spr(64,0,36,16,4)
 	end
-	
+end
+
+function drwspr(myspr)
+	spr(myspr.spr,myspr.x,myspr.y)
 end
 -->8
 --update
@@ -149,38 +152,41 @@ function update_game()
 	if btn(➡️) and pl.x<119 then
 		pl.spx=2
 		pl.spy=0
-		pl.sp=3
+		pl.spr=3
 	elseif btn(⬅️) and pl.x>1 then
 		pl.spx=-2
 		pl.spy=0
-		pl.sp=1
+		pl.spr=1
 	elseif btn(⬆️) and pl.y>0 then
-	 pl.sp=2
+	 pl.spr=2
 	 pl.spx=0
 	 pl.spy=-1
 	elseif btn(⬇️) and pl.y>=0 and pl.y<110 then
-	 pl.sp=2
+	 pl.spr=2
 	 pl.spx=0
 	 pl.spy=2
 	 flame=7 --small flame
 	else 
 	 pl.spy=0
 		pl.spx=0	
-		pl.sp=2
+		pl.spr=2
 	end
 	pl.x=pl.x+pl.spx
 	pl.y=pl.y+pl.spy 
 	
-	--enemies
-	for i=1,#en do
-		local myen=en[i]
-		
-		myen.y+=.1
+	--moving enemies
+	for myen in all(en) do
+		myen.y+=.2
 		myen.spr+=.1 --wtf works
-		if myen.spr>23 then
+		if myen.spr>=24 then
 			myen.spr=20
 		end
+		
+		if myen.y>128 then
+		 del(en,myen)
+		end
 	end
+	
 	
 	--shooting
 	if btnp(❎) then
@@ -194,8 +200,7 @@ function update_game()
 		flash=3 --size of the muzzleflash resets
 	end
 	--manage flying bullets
-	for i=#bl,1,-1 do
-		local bullet=bl[i]
+	for bullet in all(bl) do
 		bullet.y-=2
 		if bullet.y<-8 then --delete offscreen bullets
 			del(bl,bullet)
@@ -218,8 +223,7 @@ function update_end()
 end
 
 function update_stars()
-  for i=1,#stars do
-  	local mystar=stars[i] --reference
+  for mystar in all(stars) do
   	
   	mystar.y=mystar.y+mystar.s
   	if mystar.y>128 then
@@ -238,23 +242,19 @@ function draw_game()
 	draw_stars()
 
 	--player
-	spr(pl.sp,pl.x,pl.y)
+	drwspr(pl)
 	--flame
 	spr(flame,pl.x,pl.y+5)
 	
 	--enemies
-	for i=1,#en do
-		local myen=en[i]
-		
-		spr(myen.spr,myen.x,myen.y)
+	for myen in all(en) do
+		drwspr(myen)
 	end
 	
 	--shooting & bullet
 	bang() --show muzzle flash
-	for i=1,#bl do
-		local bullet=bl[i]
-		
-		spr(bullet.spr,bullet.x,bullet.y)
+	for mybul in all(bl) do
+		drwspr(mybul)
 	end
 	
  --top menu
