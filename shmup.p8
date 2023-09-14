@@ -12,8 +12,8 @@ function _init()
  blinkt=0
  splat=splat()
  
-	--mode="start"
-	mode="end"
+	mode="start"
+	--mode="end"
 end
 
 function _update60 ()
