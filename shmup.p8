@@ -18,13 +18,14 @@ function _init()
 	flame=4
 	cls(0)
 	--starfield
-	starsx={} starsy={} starsc={}
+	starsx={} starsy={}
+	starss={}
 	for i=1,100 do
 	  cols={6,7,9,10}
 	  col=cols[1+flr(rnd(4))]
 	  add(starsx,rnd(128))
 	  add(starsy,rnd(128))
-	  add(starsc,col)
+	  add(starss,rnd(1.5)+0.5)
 	end
 end
 
@@ -90,18 +91,23 @@ end
 function starfield()
   for i=1,#starsx do
    --flicker color
-   starsc[i]=starsc[i]+rnd(2)
+   local col
+   if starss[i]>1.9 then
+   	col=7
+   elseif starss[i]>1.7 then
+    col=6
+   else
+    col=13
+   end
    --render  
-			pset(starsx[i],starsy[i],starsc[i])
+			pset(starsx[i],starsy[i],col)
 			--movement
-			if (fr%4==0) then
-				if (starsy[i]<128) then
-					starsy[i]+=1
-				else
-					starsy[i]=0
-				end
+			if (starsy[i]<128) then
+				starsy[i]+=starss[i]
+			else
+				starsy[i]=0
 			end
-  end
+		end
 end
 
 function menu ()
