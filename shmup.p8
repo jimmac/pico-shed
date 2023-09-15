@@ -94,8 +94,8 @@ end
 
 function bang()
   if flash>0 then
-    circfill(pl.x+3,pl.y-3,flash,7)
-    flash-=1
+   circfill(pl.x+3,pl.y-3,flash,7)
+   flash-=1
   end
 end
 
@@ -239,9 +239,9 @@ function update_game()
 		for myen in all(en) do
 			if col(myen,pl) then
 				pl.lv-=1
-				pl.inv=30
+				pl.inv=90
 				sfx(1)
-				--el(en,myen)
+				del(en,myen)
 			end
 		end
 	end
@@ -259,7 +259,7 @@ function update_game()
 		newbl.y=pl.y-3
 		newbl.spr=16+flr(rnd(2))
 		add(bl,newbl)
-		flash=3 --size of the muzzleflash resets
+		flash=5 --size of the muzzleflash resets
 	end
 	--manage flying bullets
 	for bullet in all(bl) do
@@ -322,6 +322,12 @@ function draw_game()
 		drwspr(pl)
 		--flame
  	spr(flame,pl.x,pl.y+5)
+ else
+  --invulnerable state
+  if sin(fr/10)<0.1 then
+	  drwspr(pl)
+	  spr(flame,pl.x,pl.y+5)
+	 end
 	end
 	
 	
