@@ -83,9 +83,16 @@ end
 --tools
 
 
-function menu ()
+function draw_menu ()
   --score
+  palt(0,false)
+  print("score: "..score,49,0,0)
+  print("score: "..score,51,0,0)
+  print("score: "..score,49,2,0)
+  print("score: "..score,50,2,0)
+  print("score: "..score,51,2,0)
   print("score: "..score,50,1,6)
+  palt()
   --lives
   for i=0,4 do --5 lives
 	  if i<pl.lv then h=9 else h=8 end
@@ -174,7 +181,7 @@ function spawnenemies()
 		for j=1,3 do
 			local myen={}
 			myen.x=(i-1)*16+12
-			myen.y=16*j
+			myen.y=-64+16*j
 			myen.spy=.2
 			myen.spx=0
 			myen.spr=20+rnd(3)
@@ -261,7 +268,7 @@ function update_game()
 			newbl.y=pl.y-3
 			newbl.spr=16+flr(rnd(2))
 			add(bl,newbl)
-			firet=10 --frames between shots
+			firet=6 --frames between shots
 			flash=5 --size of the muzzleflash resets
   else
   	firet-=1			
@@ -354,7 +361,7 @@ function draw_game()
 	end
 	
  --top menu
- menu()
+ draw_menu()
 end
 
 function draw_start()
