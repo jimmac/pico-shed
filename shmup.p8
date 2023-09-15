@@ -46,6 +46,7 @@ end
 function startgame()
 	mode="game"
 	flash=0
+	firet=0
 	fr=0 --framecounter
 	--player
 	pl = {}
@@ -251,16 +252,26 @@ function update_game()
 	end
 	
 	--shooting
-	if btnp(❎) then
-		sfx(0)
-		local newbl={}
-		
-		newbl.x=pl.x
-		newbl.y=pl.y-3
-		newbl.spr=16+flr(rnd(2))
-		add(bl,newbl)
-		flash=5 --size of the muzzleflash resets
+	if btn(❎) then
+	 if firet<=0 then
+			sfx(0)
+			local newbl={}
+			
+			newbl.x=pl.x
+			newbl.y=pl.y-3
+			newbl.spr=16+flr(rnd(2))
+			add(bl,newbl)
+			firet=10 --frames between shots
+			flash=5 --size of the muzzleflash resets
+  else
+  	firet-=1			
+		end
+	else
+		--immediate fire cooldown 
+		-- when not ❎
+		firet=0
 	end
+
 	--manage flying bullets
 	for bullet in all(bl) do
 		bullet.y-=2
