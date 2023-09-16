@@ -4,10 +4,6 @@ __lua__
 -- very generic shmup 
 -- (c) 2023 jimmac.eu
 
--- todo
--- - player explosion
--- - types of enemies (helath, sprite)
-
 function _init()
  --custom font
  poke(0x5600,unpack(split"6,8,10,0,0,1,0,0,0,0,0,0,0,0,0,0,101,0,16,96,102,112,118,6,112,0,0,0,0,102,112,112,16,0,112,7,80,23,39,1,0,112,7,33,0,7,0,0,16,0,112,7,80,23,39,1,0,112,7,33,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,63,63,63,63,63,63,63,0,0,0,63,63,63,0,0,0,0,0,63,51,63,0,0,0,0,0,51,12,51,0,0,0,0,0,51,0,51,0,0,0,0,0,51,51,51,0,0,0,0,48,60,63,60,48,0,0,0,3,15,63,15,3,0,0,62,6,6,6,6,0,0,0,0,0,48,48,48,48,62,0,99,54,28,62,8,62,8,0,0,0,0,24,0,0,0,0,0,0,0,0,0,12,24,0,0,0,0,0,0,12,12,0,0,0,10,10,0,0,0,0,0,4,10,4,0,0,0,0,0,0,0,0,0,0,0,0,6,6,6,6,0,6,6,0,27,27,0,0,0,0,0,0,0,54,127,54,54,127,54,0,8,62,11,62,104,62,8,0,0,27,24,12,12,6,54,0,14,27,27,110,59,59,110,0,6,6,0,0,0,0,0,0,6,7,3,1,3,7,6,0,3,7,6,4,6,7,3,0,0,0,27,14,31,27,0,0,0,0,0,6,15,6,0,0,0,0,0,0,0,6,7,3,0,0,0,15,15,0,0,0,0,0,0,0,0,6,6,0,32,48,24,12,6,3,1,0,14,31,27,27,27,31,14,0,6,7,7,6,6,15,15,0,15,31,24,14,3,31,31,0,15,31,24,14,24,31,15,0,27,27,27,30,24,24,24,0,31,31,3,15,24,31,15,0,14,15,3,15,27,31,14,0,31,31,24,28,6,6,6,0,14,31,27,14,27,31,14,0,14,31,27,30,24,30,14,0,0,0,6,6,0,6,6,0,0,0,6,6,0,6,7,3,48,24,12,6,12,24,48,0,0,0,15,15,0,15,0,0,6,12,24,48,24,12,6,0,7,15,12,6,0,6,6,0,0,30,51,59,59,3,30,0,0,14,14,30,27,63,51,0,0,15,31,27,15,27,15,0,0,28,30,7,3,3,30,0,0,7,15,27,27,15,7,0,0,14,15,3,15,3,15,0,14,15,3,15,3,3,3,0,0,28,30,3,27,27,30,0,0,27,27,27,31,27,27,0,0,3,3,3,3,3,3,0,0,14,14,12,12,12,7,0,0,51,51,27,15,31,59,0,0,3,3,3,3,3,15,0,0,54,62,62,107,107,99,0,0,48,51,55,63,59,51,0,0,14,31,27,27,27,14,0,0,15,31,27,15,3,3,0,0,14,31,27,27,15,30,0,0,15,31,27,11,31,27,0,0,14,15,3,6,12,7,0,0,15,15,6,6,6,6,0,0,27,27,27,27,27,14,0,0,51,51,51,27,26,14,0,0,99,99,107,42,62,54,0,0,27,27,27,14,27,27,0,0,27,27,27,14,12,6,0,0,15,15,12,6,3,15,0,62,6,6,6,6,6,62,0,1,3,6,12,24,48,32,0,62,48,48,48,48,48,62,0,12,30,18,0,0,0,0,0,0,0,0,0,0,0,0,31,12,24,0,0,0,0,0,0,14,14,30,27,31,63,51,0,15,31,27,15,27,31,15,0,28,30,7,3,3,31,30,0,7,15,27,27,27,15,7,0,14,15,3,15,3,15,15,0,14,15,3,15,3,3,3,0,28,30,3,27,27,31,30,0,27,27,27,31,31,27,27,0,3,3,3,3,3,3,3,0,14,14,12,12,12,15,7,0,51,51,27,15,31,51,51,0,3,3,3,3,3,15,15,0,54,62,62,107,107,99,99,0,48,51,55,63,59,51,51,0,14,31,27,27,27,31,14,0,15,31,27,31,15,3,3,0,14,31,27,27,15,30,28,0,15,31,27,11,31,31,27,0,14,15,3,6,12,15,7,0,15,15,6,6,6,6,6,0,27,27,27,27,27,31,14,0,51,51,51,27,27,31,14,0,99,99,107,107,62,62,54,0,27,27,31,14,27,27,27,0,27,27,27,14,12,6,6,0,15,15,12,6,3,15,15,0,56,12,12,7,12,12,56,0,8,8,8,0,8,8,8,0,14,24,24,112,24,24,14,0,0,0,110,59,0,0,0,0,0,0,0,0,0,0,0,0,127,127,127,127,127,127,127,0,85,42,85,42,85,42,85,0,65,99,127,93,93,119,62,0,62,99,99,119,62,65,62,0,17,68,17,68,17,68,17,0,4,12,124,62,31,24,16,0,28,38,95,95,127,62,28,0,34,119,127,127,62,28,8,0,42,28,54,119,54,28,42,0,28,28,62,93,28,20,20,0,8,28,62,127,62,42,58,0,62,103,99,103,62,65,62,0,62,127,93,93,127,99,62,0,24,120,8,8,8,15,7,0,62,99,107,99,62,65,62,0,8,20,42,93,42,20,8,0,0,0,0,85,0,0,0,0,62,115,99,115,62,65,62,0,8,28,127,28,54,34,0,0,127,34,20,8,20,34,127,0,62,119,99,99,62,65,62,0,0,10,4,0,80,32,0,0,17,42,68,0,17,42,68,0,62,107,119,107,62,65,62,0,127,0,127,0,127,0,127,0,85,85,85,85,85,85,85,0"))
@@ -15,7 +11,7 @@ function _init()
  blinkt=0
  splat=splat()
  
-	mode="start"
+	mode="youwin"
 end
 
 function _update60 ()
@@ -23,8 +19,12 @@ function _update60 ()
   
   if mode=="game" then
 	  update_game()
-	 elseif mode=="end" then
-	  update_end()
+	 elseif mode=="wavetext" then
+	 	update_wavetext()
+	 elseif mode=="gameover" then
+	  update_gameover()
+	 elseif mode=="youwin" then
+	  update_youwin() 
 	 else
 	 --start
 	 	update_start()
@@ -34,8 +34,12 @@ end
 function _draw ()
   if mode=="game" then
 	  draw_game()
-	 elseif mode=="end" then
-	  draw_end()
+	 elseif mode=="wavetext" then
+	 	draw_wavetext()
+	 elseif mode=="gameover" then
+	  draw_gameover()
+	 elseif mode=="youwin" then
+	  draw_youwin()	  
 	 else
 	 --start
 	 	draw_start()
@@ -43,10 +47,12 @@ function _draw ()
 end
 
 function startgame()
-	mode="game"
+	mode="wavetext"
 	flash=0
 	firet=0
 	fr=0 --framecounter
+	wave=0
+	wavet=160
 	--player
 	pl = {}
 	pl.x=63
@@ -241,25 +247,6 @@ function setoff_sw(x,y,maxage)
 	add(sws,mysw)
 end
 
-function spawnenemies()
-	for i=1,7 do
-		for j=1,3 do
-			local myen={}
-			myen.x=(i-1)*16+12
-			myen.y=-64+16*j
-			myen.spy=.2
-			myen.spx=0
-			local esprs={20,24,36,40,52}
-			local espr=esprs[1+flr(rnd(#esprs))]
-			myen.sprbase=espr
-			myen.spr=myen.sprbase
-			myen.hp=4
-			myen.flash=0
-			add(en,myen)
-		end
-	end
-end
-
 --recolor explosion particles
 function age_to_c(age,kind)
 	local colors={}
@@ -329,7 +316,7 @@ function update_game()
 	end
 	-- spawn enemies
 	if #en==0 then
-		spawnenemies()
+		spawnwave()
 	end
 	
 	--collision pl x en
@@ -348,7 +335,7 @@ function update_game()
 	end
 	pl.inv-=1
 	if pl.lv<=0 then
-		mode="end"
+		mode="gameover"
 	end
 	
 	--shooting
@@ -394,7 +381,7 @@ function update_game()
 				setoff_sparks(enemy.x,enemy.y)
 				if enemy.hp<=0 then
 					sfx(2)
-					score+=100
+					score+=10
 					del(en,enemy)
 					--explode where it was
 					setoff_explosion(enemy.x,enemy.y)
@@ -405,6 +392,13 @@ function update_game()
 	end
 end
 
+function update_wavetext()
+	update_game()
+	wavet-=1
+	if wavet<=0 then
+		mode="game"
+	end
+end
 
 function update_start()
 	if btnp(❎) or btnp(🅾️) then
@@ -412,10 +406,16 @@ function update_start()
 	end
 end
 
-function update_end()
+function update_gameover()
  score=0
  pl.lv=5
-	if btnp(❎) or btnp(🅾️) then
+	if btnp(🅾️) then
+		mode="start"
+	end
+end
+
+function update_youwin()
+	if btnp(🅾️) then
 		mode="start"
 	end
 end
@@ -519,6 +519,12 @@ function draw_game()
  draw_menu()
 end
 
+function draw_wavetext()
+	draw_game()
+	print("wave "..wave.." approaching",30,40,blink())
+end
+
+
 function draw_start()
 	cls(2)
 	draw_logo(1)
@@ -527,14 +533,22 @@ function draw_start()
     to start", 30,100,blink())
 end
 
-function draw_end()
+function draw_gameover()
  cls(2)
 
 	print("\14 game over",36,41,1)
 	print("\14 game over",36,40,7)
 
-	print("press any button", 34,101,1)	
-	print("press any button", 34,100,blink())
+	print("press 🅾️", 46,101,1)	
+	print("press 🅾️", 46,100,blink())
+end
+
+function draw_youwin()
+ cls(9)
+
+	print("\14 you won!",38,40,7)
+
+	print("press 🅾️", 46,100,blink())
 end
 
 --draw starfield
@@ -551,6 +565,40 @@ function draw_stars()
   	
   	pset(mystar.x,mystar.y,scol)
   end
+end
+-->8
+function spawnwave()
+
+ if wave<5 then
+ 	--normal waves
+		wave+=1 wavet=160
+		mode="wavetext"
+		--spawn a grid of 7x3
+		for i=1,7 do
+			for j=1,3 do
+				local x=(i-1)*16+12
+		  local y=-64+16*j
+		  hp=wave
+				spawnen(x,y,hp)
+			end
+		end
+	else --win
+		mode="youwin"
+	end
+end
+
+function spawnen(x,y,hp)
+			local myen={}
+			myen.x=x
+			myen.y=y
+			myen.spy=.2
+			myen.spx=0
+			local esprs={20,24,36,40,52}
+			myen.sprbase=esprs[hp]
+			myen.spr=myen.sprbase
+			myen.hp=hp
+			myen.flash=0
+			add(en,myen)
 end
 __gfx__
 00000000000660000006600000066000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
