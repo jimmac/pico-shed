@@ -5,9 +5,8 @@ __lua__
 -- (c) 2023 jimmac.eu
 
 -- todo
--- - explosions
--- - sprite recoloring (hit)
--- 
+-- - player explosion
+-- - types of enemies (helath, sprite)
 
 function _init()
  --custom font
@@ -181,7 +180,8 @@ function flashpal()
 	end
 end
 
-function explode(x,y) 
+function setoff_explosion(x,y,kind)
+  if kind==nil then kind="generic" end
  --create particle
 	for i=1,50 do
 		local myp={}
@@ -193,6 +193,7 @@ function explode(x,y)
 		myp.age=rnd(2)
 		myp.maxage=20+rnd(20)
 		myp.size=1+rnd(2)
+		myp.kind=kind
 		add(parts,myp)
 	end
 	--set up shockwave
@@ -224,6 +225,9 @@ function spawnenemies()
 		end
 	end
 end
+
+
+
 -->8
 --update
 function update_game()
@@ -285,7 +289,8 @@ function update_game()
 				pl.inv=90
 				sfx(1)
 				del(en,myen)
-				explode(myen.x,myen.y)
+				setoff_explosion(myen.x-rnd(10),myen.y-rnd(10))
+				setoff_explosion(pl.x+rnd(10),pl.y+rnd(10),"player")
 			end
 		end
 	end
@@ -336,7 +341,7 @@ function update_game()
 					score+=100
 					del(en,enemy)
 					--explode where it was
-					explode(enemy.x,enemy.y)
+					setoff_explosion(enemy.x,enemy.y)
 				end
 			end
 		end
@@ -390,7 +395,6 @@ function draw_game()
 	  drwspr(pl)
 	  pal()
 	  spr(flame,pl.x,pl.y+5)
-
 	 end
 	end
 	
@@ -427,16 +431,19 @@ function draw_game()
 		local c=7
 		local r=1/(myp.age)*myp.size*40
 		
+		local colors={}
+		colors["generic"]={7,10,9,8,2}
+		colors["player"]={7,12,14,13,1}
 		if myp.age<8 then
-			c=7
+			c=colors[myp.kind][1]
 		elseif myp.age<=15 then
-			c=10
+			c=colors[myp.kind][2]
 		elseif myp.age<=20 then
-			c=9
+			c=colors[myp.kind][3]
 		elseif myp.age<=25 then
-			c=8
+			c=colors[myp.kind][4]
 		else
-		 c=2
+		 c=colors[myp.kind][5]
 		end
 
 		circfill(myp.x,myp.y,r,c)
@@ -481,6 +488,7 @@ function draw_end()
 	print("press any button", 34,100,blink())
 end
 
+--draw starfield
 function draw_stars()
   for i=1,#stars do
   	local mystar=stars[i]
@@ -495,7 +503,6 @@ function draw_stars()
   	pset(mystar.x,mystar.y,scol)
   end
 end
-
 __gfx__
 00000000000660000006600000066000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 000000000007d0000707607000076000000000000000000000000000000000000282820002828200000000000000000000000000000000000000000000000000
