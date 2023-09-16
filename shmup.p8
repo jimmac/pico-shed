@@ -207,7 +207,7 @@ end
 
 function setoff_sparks(x,y)
 --create spark (when enemy hit)
-for i=1,10 do
+for i=1,2 do
 	local myp={}
 	myp.x=x+3
 	myp.y=y+5
@@ -253,7 +253,7 @@ function spawnenemies()
 			local espr=esprs[1+flr(rnd(#esprs))]
 			myen.sprbase=espr
 			myen.spr=myen.sprbase
-			myen.hp=3
+			myen.hp=4
 			myen.flash=0
 			add(en,myen)
 		end
