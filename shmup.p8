@@ -245,7 +245,7 @@ function age_to_c(age,kind)
 	local colors={}
 	colors["generic"]={7,10,9,8,2}
 	colors["player"]={7,12,14,13,1}
-	if age<8 then
+	if age<10 then
 		c=colors[kind][1]
 	elseif age<=15 then
 		c=colors[kind][2]
