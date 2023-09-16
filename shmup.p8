@@ -187,13 +187,19 @@ function setoff_explosion(x,y,kind)
 		local myp={}
 		myp.x=x+3
 		myp.y=y+5
-		myp.sx=(rnd()-.5)*2
-		myp.sy=((rnd()-.5)*2)-1.5
-              		-- also move up
 		myp.age=rnd(2)
 		myp.maxage=20+rnd(20)
 		myp.size=1+rnd(2)
 		myp.kind=kind
+		if rnd()>0.5 then
+			myp.spark=true
+			myp.sx=(rnd()-.5)*10
+ 		myp.sy=((rnd()-.5)*10)
+		else
+		 myp.spark=false
+ 		myp.sx=(rnd()-.5)*2
+ 		myp.sy=((rnd()-.5)*2)
+		end
 		add(parts,myp)
 	end
 end
@@ -456,14 +462,18 @@ function draw_game()
 		end
 
 	end
-	--explosion (made of parts)
+	--explosion and sparks
 	for myp in all(parts) do
 		local c=7
 		local r=1/(myp.age)*myp.size*40
 		
 		c=age_to_c(myp.age,myp.kind)
 
-		circfill(myp.x,myp.y,r,c)
+		if myp.spark then
+		 pset(myp.x,myp.y,c)
+		else
+			circfill(myp.x,myp.y,r,c)
+		end
 		myp.x+=myp.sx
 		myp.y+=myp.sy
 		myp.sx=myp.sx*0.93 --dampen
