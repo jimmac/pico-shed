@@ -10,8 +10,8 @@ function _init()
  score=0
  blinkt=0
  splat=splat()
- 
-	mode="youwin"
+ btnrelease=true
+	mode="start"
 end
 
 function _update60 ()
@@ -409,14 +409,28 @@ end
 function update_gameover()
  score=0
  pl.lv=5
-	if btnp(🅾️) then
-		mode="start"
+ if btn(❎)==false and btn(🅾️)==false then
+ 	btnrelease=true
+ end
+ 
+ if btnrelease then
+		if btnp(🅾️) then
+			mode="start"
+			btnrelease=false
+		end
 	end
 end
 
 function update_youwin()
-	if btnp(🅾️) then
-		mode="start"
+ if btn(❎)==false and btn(🅾️)==false then
+ 	btnrelease=true
+ end
+ 
+ if btnrelease then
+		if btnp(🅾️) then
+			mode="start"
+			btnrelease=false
+		end
 	end
 end
 
