@@ -196,13 +196,21 @@ function setoff_explosion(x,y,kind)
 		myp.kind=kind
 		add(parts,myp)
 	end
+end
+
+function setoff_sw(x,y,maxage)
 	--set up shockwave
 	local mysw={}
 	
-	mysw.x=x
-	mysw.y=y
+	mysw.x=x+3
+	mysw.y=y+3
 	mysw.s=5
 	mysw.r=0
+	if maxage==nil then
+		mysw.maxage=100
+	else
+		mysw.maxage=maxage
+	end
 	mysw.age=0
 	add(sws,mysw)
 end
@@ -226,8 +234,25 @@ function spawnenemies()
 	end
 end
 
-
-
+--recolor explosion particles
+function age_to_c(age,kind)
+	local colors={}
+	colors["generic"]={7,10,9,8,2}
+	colors["player"]={7,12,14,13,1}
+	if age<8 then
+		c=colors[kind][1]
+	elseif age<=15 then
+		c=colors[kind][2]
+	elseif age<=20 then
+		c=colors[kind][3]
+	elseif age<=25 then
+		c=colors[kind][4]
+	else
+	 c=colors[kind][5]
+	end
+	
+	return c
+end
 -->8
 --update
 function update_game()
@@ -291,6 +316,7 @@ function update_game()
 				del(en,myen)
 				setoff_explosion(myen.x-rnd(10),myen.y-rnd(10))
 				setoff_explosion(pl.x+rnd(10),pl.y+rnd(10),"player")
+				setoff_sw(pl.x,pl.y)
 			end
 		end
 	end
@@ -336,12 +362,15 @@ function update_game()
 				enemy.hp-=1
 				sfx(3)
 				enemy.flash=3
+				--every hit triggers sw
+				setoff_sw(enemy.x,enemy.y,2)
 				if enemy.hp<=0 then
 					sfx(2)
 					score+=100
 					del(en,enemy)
 					--explode where it was
 					setoff_explosion(enemy.x,enemy.y)
+					setoff_sw(enemy.x,enemy.y)
 				end
 			end
 		end
@@ -420,31 +449,19 @@ function draw_game()
 	 circ(mysw.x,mysw.y,mysw.r+1,2)
 	 circ(mysw.x,mysw.y,mysw.r+2,5)
 	 mysw.s=mysw.s+.9 --slowdown
-		mysw.r=mysw.r+mysw.s
+	 mysw.r=mysw.r+mysw.s
 		mysw.age+=1
-		if mysw.age>100 then
+	 if mysw.age>mysw.maxage then
 			del(sws,mysw)
 		end
+
 	end
 	--explosion (made of parts)
 	for myp in all(parts) do
 		local c=7
 		local r=1/(myp.age)*myp.size*40
 		
-		local colors={}
-		colors["generic"]={7,10,9,8,2}
-		colors["player"]={7,12,14,13,1}
-		if myp.age<8 then
-			c=colors[myp.kind][1]
-		elseif myp.age<=15 then
-			c=colors[myp.kind][2]
-		elseif myp.age<=20 then
-			c=colors[myp.kind][3]
-		elseif myp.age<=25 then
-			c=colors[myp.kind][4]
-		else
-		 c=colors[myp.kind][5]
-		end
+		c=age_to_c(myp.age,myp.kind)
 
 		circfill(myp.x,myp.y,r,c)
 		myp.x+=myp.sx
