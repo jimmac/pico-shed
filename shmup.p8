@@ -204,6 +204,25 @@ function setoff_explosion(x,y,kind)
 	end
 end
 
+function setoff_sparks(x,y)
+--create spark (when enemy hit)
+for i=1,10 do
+	local myp={}
+	myp.x=x+3
+	myp.y=y+5
+	myp.age=10+rnd(2)
+	myp.maxage=rnd(10)
+	myp.size=1+rnd(2)
+	myp.sx=(rnd()-.5)*20
+	myp.sy=((rnd()-1)*20)
+	myp.kind="generic"
+	myp.spark=true
+	
+	add(parts,myp)
+end
+
+end
+
 function setoff_sw(x,y,maxage)
 	--set up shockwave
 	local mysw={}
@@ -370,6 +389,8 @@ function update_game()
 				enemy.flash=3
 				--every hit triggers sw
 				setoff_sw(enemy.x,enemy.y,2)
+				--and sparks
+				setoff_sparks(enemy.x,enemy.y)
 				if enemy.hp<=0 then
 					sfx(2)
 					score+=100
