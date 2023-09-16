@@ -188,17 +188,18 @@ function setoff_explosion(x,y,kind)
 		myp.x=x+3
 		myp.y=y+5
 		myp.age=rnd(2)
-		myp.maxage=20+rnd(20)
 		myp.size=1+rnd(2)
 		myp.kind=kind
 		if rnd()>0.5 then
 			myp.spark=true
 			myp.sx=(rnd()-.5)*10
  		myp.sy=((rnd()-.5)*10)
+ 		myp.maxage=10+rnd(20)
 		else
 		 myp.spark=false
  		myp.sx=(rnd()-.5)*2
  		myp.sy=((rnd()-.5)*2)
+			myp.maxage=20+rnd(20)
 		end
 		add(parts,myp)
 	end
@@ -213,8 +214,8 @@ for i=1,10 do
 	myp.age=10+rnd(2)
 	myp.maxage=rnd(10)
 	myp.size=1+rnd(2)
-	myp.sx=(rnd()-.5)*20
-	myp.sy=((rnd()-1)*20)
+	myp.sx=(rnd()-.5)*10
+	myp.sy=((rnd()-1)*10)
 	myp.kind="generic"
 	myp.spark=true
 	
@@ -491,7 +492,7 @@ function draw_game()
 		c=age_to_c(myp.age,myp.kind)
 
 		if myp.spark then
-		 pset(myp.x,myp.y,c)
+		 pset(myp.x,myp.y,7)
 		else
 			circfill(myp.x,myp.y,r,c)
 		end
