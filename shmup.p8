@@ -311,7 +311,7 @@ function update_game()
 		end
 	
 		-- kill offscreen enemies
-		if myen.y>128 then
+		if myen.y>150 then
 		 del(en,myen)
 		end
 	end
@@ -595,7 +595,7 @@ function spawnwave()
 		for i=1,7 do
 			for j=1,3 do
 				local x=(i-1)*16+12
-		  local y=-64+16*j
+		  local y=-96+16*j
 		  hp=wave
 				spawnen(x,y,hp)
 			end
