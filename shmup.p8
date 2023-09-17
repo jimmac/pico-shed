@@ -55,14 +55,12 @@ function startgame()
 	wave=0
 	wavet=160
 	--player
-	pl={}
+	pl=makespr()
 	pl.x=63
 	pl.y=100
 	pl.spx=0
 	pl.spy=0  --speed
 	pl.spr=2
-	pl.sprw=1
-	pl.sprh=1
 	pl.lv=3   --number of lives
 	pl.inv=0  --invincibility 
 	          -- frames
@@ -87,12 +85,7 @@ function startgame()
 	end
 	
 	--enemy waves
-	enwaves={}
-	enwaves[1]={rows=3,'diamond'}
-	enwaves[2]={rows=4,'grid'}
-	enwaves[3]={rows=4,'diamond'}
-	enwaves[4]={rows=4,'grid'}
-	enwaves[5]={rows=5,'grid'}
+	wave=0
 end
 -->8
 --tools
@@ -279,14 +272,25 @@ function age_to_c(age,kind)
 end
 
 function spawn_bullet(x,y,spr)
-	local newbl={}
+	local newbl=makespr()
 	
 	newbl.x=x
 	newbl.y=y
 	newbl.spr=spr
-	newbl.sprw=1
-	newbl.sprh=1
 	add(bl,newbl)
+end
+
+function makespr()
+	local myspr={}
+	myspr.x=0
+	myspr.y=0
+	myspr.flash=0
+	myspr.aniframe=1
+	myspr.spr=0
+	myspr.sprw=1
+	myspr.sprh=1
+	
+	return myspr
 end
 -->8
 --update
@@ -615,10 +619,12 @@ end
 -->8
 function spawnwave()
 
- if wave<=#enwaves then
+ if wave<=5 then
  	--normal waves
 		wave+=1 wavet=160
 		mode="wavetext"
+		music(24)
+		--fixme
 		spawnen(50,20,wave)
 	else --win
 		mode="youwin"
@@ -933,6 +939,7 @@ cf100000001602e1502915000150221501f150001501f1501f13000110131201b13000140111300f
 b51000000032000320003200032000320003200032000320003200032000320003200032000320003200032003320033200332003320033200332003320033200632006320063200632006320063200632006320
 001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 003000002a0501f050130500305000050000000005000000000500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0110000021050260502a05023050230503b000250002c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __music__
 00 14164355
 00 14164315
@@ -958,7 +965,7 @@ __music__
 00 1c554344
 00 161b4344
 02 161b4344
-00 41424344
+00 1f424344
 00 41424344
 00 41424344
 00 41424344
