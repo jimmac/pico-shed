@@ -61,6 +61,8 @@ function startgame()
 	pl.spx=0
 	pl.spy=0  --speed
 	pl.spr=2
+	pl.sprw=1
+	pl.sprh=1
 	pl.lv=1   --number of lives
 	pl.inv=0  --invincibility 
 	          -- frames
@@ -165,7 +167,7 @@ function draw_logo(l)
 end
 
 function drwspr(myspr)
-	spr(myspr.spr,myspr.x,myspr.y)
+	spr(myspr.spr,myspr.x,myspr.y,myspr.sprw,myspr.sprh)
 end
 
 function col(a,b)
@@ -282,6 +284,8 @@ function spawn_bullet(x,y,spr)
 	newbl.x=x
 	newbl.y=y
 	newbl.spr=spr
+	newbl.sprw=1
+	newbl.sprh=1
 	add(bl,newbl)
 end
 -->8
@@ -494,9 +498,8 @@ function draw_game()
 		pal()
 	end
 	
-	--shooting & bullet
-	bang() --show muzzle flash
 
+	bang() --show muzzle flash
 
  --big explosion--
 	--showckwave
@@ -597,7 +600,7 @@ end
 -->8
 function spawnwave()
 
- if wave<5 then
+ if wave<=#enwaves then
  	--normal waves
 		wave+=1 wavet=160
 		mode="wavetext"
@@ -622,29 +625,37 @@ function spawnen(x,y,entype)
 	myen.x=x
 	myen.y=y
 	myen.aniframe=1+rnd(4) --first frame of animation	
-	if entype==10 then
+	myen.sprw=1
+	myen.sprh=1
+	if entype==6 then
 		--boss
-		printh('boss')
-	elseif entype==2 then
-		myen.hp=3
+		myen.sprw=2
+		myen.sprh=2
+		myen.hp=50
+		myen.spy=.1
+		myen.spx=.1
+		myen.ani={24,27,30}
+	elseif entype==5 then
+		--skull
+		myen.hp=5
 		myen.spy=.25
 		myen.spx=0
-		myen.ani={20,21,22,23}
-	elseif entype==3 then
-		myen.hp=4
-		myen.spy=.2
-		myen.spx=0
-		myen.ani={32,33,34,35}
+		myen.ani={48,49,50,51}
 	elseif entype==4 then
 		myen.hp=2
 		myen.spy=.5
 		myen.spx=0
 		myen.ani={36,37,38,39}
-	elseif entype==5 then
-		myen.hp=5
+	elseif entype==3 then
+		myen.hp=4
+		myen.spy=.2
+		myen.spx=0
+		myen.ani={32,33,34,35}
+	elseif entype==2 then
+		myen.hp=3
 		myen.spy=.25
 		myen.spx=0
-		myen.ani={48,49,50,51}
+		myen.ani={20,21,22,23}
 	else
 		--default 1
 		myen.hp=2
