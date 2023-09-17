@@ -330,6 +330,10 @@ function update_game()
 	--moving enemies
 	for myen in all(en) do
 		myen.y+=myen.spy
+		myen.x+=myen.spx
+		if myen.x>(128-myen.sprw*8) or myen.x<0 then
+			myen.spx=-myen.spx
+		end
 		myen.aniframe+=.1 --wtf works
 	 myen.spr=myen.ani[flr(myen.aniframe)]
 
@@ -635,44 +639,42 @@ end
 function spawnen(x,y,entype)
 	if entype==nil then entype=1 end
 	
-	local myen={}
+	local myen=makespr()
 	myen.x=x
 	myen.y=y
 	myen.aniframe=1+rnd(4) --first frame of animation	
-	myen.sprw=1
-	myen.sprh=1
 	if entype==6 then
 		--boss
 		myen.sprw=2
 		myen.sprh=2
 		myen.hp=50
 		myen.spy=.1
-		myen.spx=.1
+		myen.spx=1
 		myen.ani={24,26,28}
 	elseif entype==5 then
 		--skull
-		myen.hp=5
+		myen.hp=4
 		myen.spy=.25
-		myen.spx=0
+		myen.spx=.2
 		myen.ani={48,49,50,51}
 	elseif entype==4 then
-		myen.hp=2
+		myen.hp=3
 		myen.spy=.5
-		myen.spx=0
+		myen.spx=.15
 		myen.ani={36,37,38,39}
 	elseif entype==3 then
-		myen.hp=4
+		myen.hp=3
 		myen.spy=.2
-		myen.spx=0
+		myen.spx=.1
 		myen.ani={32,33,34,35}
 	elseif entype==2 then
-		myen.hp=3
+		myen.hp=2
 		myen.spy=.25
 		myen.spx=0
 		myen.ani={20,21,22,23}
 	else
 		--default 1
-		myen.hp=2
+		myen.hp=1
 		myen.spy=.2
 		myen.spx=0
 		myen.ani={16,17,18,19}
