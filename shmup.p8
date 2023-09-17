@@ -202,8 +202,8 @@ function setoff_explosion(x,y,kind)
  --create particle
 	for i=1,50 do
 		local myp={}
-		myp.x=x+3
-		myp.y=y+5
+		myp.x=x
+		myp.y=y
 		myp.age=rnd(2)
 		myp.size=1+rnd(2)
 		myp.kind=kind
@@ -226,8 +226,8 @@ function setoff_sparks(x,y)
 --create spark (when enemy hit)
 for i=1,2 do
 	local myp={}
-	myp.x=x+3
-	myp.y=y+5
+	myp.x=x
+	myp.y=y
 	myp.age=10+rnd(2)
 	myp.maxage=rnd(10)
 	myp.size=1+rnd(2)
@@ -245,8 +245,8 @@ function setoff_sw(x,y,maxage)
 	--set up shockwave
 	local mysw={}
 	
-	mysw.x=x+3
-	mysw.y=y+3
+	mysw.x=x
+	mysw.y=y
 	mysw.s=5
 	mysw.r=0
 	if maxage==nil then
@@ -346,13 +346,17 @@ function update_game()
 	if pl.inv<=0 then
 		for myen in all(en) do
 			if col(myen,pl) then
+			 local encx=myen.x+myen.sprw*4
+			 local ency=myen.y+myen.sprh*4
+			 local plcx=pl.x+pl.sprw*4
+			 local plcy=pl.y+pl.sprh*4
 				pl.lv-=1
 				pl.inv=90
 				sfx(1)
 				del(en,myen)
-				setoff_explosion(myen.x-rnd(10),myen.y-rnd(10))
-				setoff_explosion(pl.x+rnd(10),pl.y+rnd(10),"player")
-				setoff_sw(pl.x,pl.y)
+				setoff_explosion(encx-rnd(10),ency-rnd(10))
+				setoff_explosion(plcx+rnd(10),plcy+rnd(10),"player")
+				setoff_sw(plcx,plcy)
 			end
 		end
 	end
@@ -389,23 +393,25 @@ function update_game()
 	
 	--collision bullets vs enemies
 	for bullet in all(bl) do
-		for enemy in all(en) do
-			if col(bullet,enemy) then
+		for myen in all(en) do
+			if col(bullet,myen) then
 				del(bl,bullet)
-				enemy.hp-=1
+				myen.hp-=1
 				sfx(3)
-				enemy.flash=3
+				myen.flash=3
 				--every hit triggers sw
-				setoff_sw(enemy.x,enemy.y,2)
+				local encx=myen.x+myen.sprw*4
+			 local ency=myen.y+myen.sprh*4
+				setoff_sw(encx,ency,2)
 				--and sparks
-				setoff_sparks(enemy.x,enemy.y)
-				if enemy.hp<=0 then
+				setoff_sparks(encx,ency)
+				if myen.hp<=0 then
 					sfx(2)
 					score+=10
-					del(en,enemy)
+					del(en,myen)
 					--explode where it was
-					setoff_explosion(enemy.x,enemy.y)
-					setoff_sw(enemy.x,enemy.y)
+					setoff_explosion(encx,ency)
+					setoff_sw(encx,ency)
 				end
 			end
 		end
@@ -449,7 +455,6 @@ function update_gameover()
 end
 
 function update_youwin()
-	printh(btnrelease)
  if btn(❎)==false and btn(🅾️)==false then
  	btnrelease=true
  end
