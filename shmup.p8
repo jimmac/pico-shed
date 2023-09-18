@@ -168,13 +168,13 @@ function col(a,b)
 	--assumes 8x8 sprites
 	local a_left=a.x
 	local a_top=a.y
-	local a_right=a.x+a.sprw*7
-	local a_bottom=a.y+a.sprh*7
+	local a_right=a.x+a.colw
+	local a_bottom=a.y+a.colh
 	
 	local b_left=b.x
 	local b_top=b.y
-	local b_right=b.x+b.sprw*7
-	local b_bottom=b.y+b.sprh*7
+	local b_right=b.x+b.colw
+	local b_bottom=b.y+b.colh
 
 	if a_top>b_bottom then	return false	end
 	if b_top>a_bottom then	return false	end
@@ -289,6 +289,8 @@ function makespr()
 	myspr.spr=0
 	myspr.sprw=1
 	myspr.sprh=1
+	myspr.colw=8
+	myspr.colh=8
 	
 	return myspr
 end
@@ -647,6 +649,8 @@ function spawnen(x,y,entype)
 		--boss
 		myen.sprw=2
 		myen.sprh=2
+		myen.colw=16
+		myen.colh=16
 		myen.hp=50
 		myen.spy=.1
 		myen.spx=1
