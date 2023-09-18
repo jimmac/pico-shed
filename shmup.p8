@@ -334,11 +334,9 @@ function update_game()
 	
 	--moving enemies
 	for myen in all(en) do
-		myen.y+=myen.spy
-		myen.x+=myen.spx
-		if myen.x>(128-myen.sprw*8) or myen.x<0 then
-			myen.spx=-myen.spx
-		end
+  --mission
+  doenemy(myen)
+		--animation
 		myen.aniframe+=.1 --wtf works
 	 myen.spr=myen.ani[flr(myen.aniframe)]
 
@@ -631,10 +629,12 @@ function draw_stars()
   end
 end
 -->8
+--enemies
+
 function nextwave()
  wave+=1
  
- if wave>5 then
+ if wave>4 then
 	 mode="youwin"
 	 lockout=t+30
 	 music(24)
@@ -649,11 +649,14 @@ function spawnwave()
 	if wave==1 then
 		placen({
 			{1,1,1,1,1,1,1,1,1,1},
+			{1,1,1,1,1,1,1,1,1,1},
+			{1,1,1,1,1,1,1,1,1,1},
 			{1,1,1,1,1,1,1,1,1,1}
 		})
 	elseif wave==2 then
 		placen({
 			{3,3,3,3,3,3,3,3,3,3},
+			{2,2,2,2,2,2,2,2,2,2},
 			{2,2,2,2,2,2,2,2,2,2},
 			{1,1,1,1,1,1,1,1,1,1}
 		})
@@ -676,18 +679,24 @@ function placen(mywave)
 	for i=1,#mywave do --rows
 		for j=1,#mywave[i] do --columns
 			if mywave[i][j]>0 then
-				spawnen(j*10,i*10,mywave[i][j])
+				spawnen(j*12-6,i*12,mywave[i][j],j*2)
 			end
 		end
 	end
 end
 
-function spawnen(x,y,entype)
+function spawnen(x,y,entype,enwait)
 	if entype==nil then entype=1 end
 	
 	local myen=makespr()
 	myen.x=x
-	myen.y=y
+	myen.y=y-66
+	
+	myen.posx=x
+	myen.posy=y
+	
+	myen.wait=enwait
+	
 	myen.aniframe=1+rnd(4) --first frame of animation	
 	if entype==6 then
 		--boss
@@ -702,8 +711,8 @@ function spawnen(x,y,entype)
 	elseif entype==5 then
 		--skull
 		myen.hp=4
-		myen.spy=.25
-		myen.spx=.2
+		myen.spy=.2
+		myen.spx=0
 		myen.ani={48,49,50,51}
 	elseif entype==4 then
 		myen.hp=3
@@ -728,7 +737,30 @@ function spawnen(x,y,entype)
 		myen.ani={16,17,18,19}
 	end
 	myen.flash=0
+ myen.mission="flyin"
 	add(en,myen)
+end
+-->8
+--behaviors
+
+function doenemy(myen)
+	if myen.wait>0 then 
+		myen.wait-=1
+		return
+	end
+ if myen.mission=="flyin" then
+  --flying in
+  myen.y+=1
+  if myen.y>=myen.posy then
+   myen.mission="protec"
+  end
+  
+ elseif myen.mission=="protec" then
+  -- staying put
+ elseif myen.mission=="attac" then  
+  -- attac 
+ end
+  
 end
 __gfx__
 00000000000660000006600000066000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000097900979
