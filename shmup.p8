@@ -649,7 +649,7 @@ function draw_game()
  draw_menu()
  
  --debug
- --print(t,2,102,15)
+ print(t,2,102,15)
  --print(#ebl)
 end
 
@@ -683,9 +683,9 @@ end
 
 function draw_youwin()
  draw_bgpattern()
- spr(160,45,34,5,5)
-	print("\14 player wins!",31,80+sin(t/50)*4,7)
-
+ spr(160,48,34,5,5)
+	print("\14 player wins!",31,85+sin(t/90)*2,13)
+	print("\14 player wins!",31,80+sin(t/100)*4,7)
 	print("press any button", 34,100,blink())
 end
 
@@ -750,10 +750,10 @@ function spawnwave()
 	elseif wave==3 then
 	 attackfreq=60
 		placen({
-			{3,3,3,3,3,3,3,3,3,3},
-			{3,0,4,0,3,3,0,4,0,3},
-			{3,0,0,0,3,3,0,0,0,3},
-			{0,3,3,3,3,3,3,3,3,0}
+			{0,3,3,3,0,0,0,3,3,0},
+			{3,4,4,4,3,3,4,4,4,3},
+			{3,4,4,4,3,3,4,4,4,3},
+			{0,3,3,3,0,0,3,3,3,0}
 		})
 		sfx(34)
 	elseif wave==4 then
