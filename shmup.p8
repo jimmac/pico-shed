@@ -160,7 +160,14 @@ function draw_logo(l)
 end
 
 function drwspr(myspr)
-	spr(myspr.spr,myspr.x,myspr.y,myspr.sprw,myspr.sprh)
+ local sprx=myspr.x
+ local spry=myspr.y
+ 
+ if myspr.shake>0 then
+ 	myspr.shake-=1
+ 	sprx+=sin(t/17)
+ end
+	spr(myspr.spr,sprx,spry,myspr.sprw,myspr.sprh)
 end
 
 function col(a,b)
@@ -284,7 +291,10 @@ function makespr()
 	local myspr={}
 	myspr.x=0
 	myspr.y=0
+	myspr.sx=0
+	myspr.sy=0
 	myspr.flash=0
+	myspr.shake=0
 	myspr.aniframe=1
 	myspr.spr=0
 	myspr.sprw=1
@@ -295,6 +305,10 @@ function makespr()
 	return myspr
 end
 
+function move(obj)
+  obj.x+=obj.sx
+  obj.y+=obj.sy
+end
 
 -->8
 --update
@@ -333,29 +347,33 @@ function update_game()
 	pl.x=pl.x+pl.spx
 	pl.y=pl.y+pl.spy 
 	
+	-- spawn enemies if wave over
+ if mode=="game" and #en==0 then
+		nextwave()
+	end
+	
 	--moving enemies
 	for myen in all(en) do
   --mission
   doenemy(myen)
 		--animation
-		myen.aniframe+=.1 --wtf works
 	 myen.spr=myen.ani[flr(myen.aniframe)]
+		myen.aniframe+=myen.anispd
 
 	 if (myen.aniframe>=#myen.ani+.9) then
 	 	myen.aniframe=1
 	 end
 		-- kill offscreen enemies
-		if myen.y>150 then
-		 del(en,myen)
+		if myen.mission!="flyin" then
+			if myen.y>150 or myen.x>170 or myen.x<-42 then
+			 del(en,myen)
+			end
 		end
 	end
 	-- picking an enemy for attack
 	enpick()
 	
-	-- spawn enemies if wave over
- if mode=="game" and #en==0 then
-		nextwave()
-	end
+	
 	
 	--collision pl x en
 	if pl.inv<=0 then
@@ -587,7 +605,7 @@ end
 
 function draw_wavetext()
 	draw_game()
-	if wave==5 then
+	if wave==6 then
 		print("final boss approaching",23,40,blink())
 	else
 		print("wave "..wave.." approaching",30,40,blink())
@@ -609,8 +627,8 @@ function draw_gameover()
 	print("\14 game over",36,41,1)
 	print("\14 game over",36,40,7)
 
-	print("press 🅾️", 46,101,1)	
-	print("press 🅾️", 46,100,blink())
+	print("press any button", 46,101,1)	
+	print("press any button", 46,100,blink())
 end
 
 function draw_youwin()
@@ -618,7 +636,7 @@ function draw_youwin()
 
 	print("\14 you won!",38,40,7)
 
-	print("press 🅾️", 46,100,blink())
+	print("press any button", 46,100,blink())
 end
 
 --draw starfield
@@ -717,12 +735,12 @@ function spawnen(x,y,entype,enwait)
 	myen.posy=y
 	
 	myen.wait=enwait
-	myen.boss=false
-	
+	myen.type=entype
+	myen.anispd=.1
+			
 	myen.aniframe=1+rnd(4) --first frame of animation	
 	if entype==6 then
-		--boss
-		myen.boss=true
+		--big boy
 		myen.sprw=2
 		myen.sprh=2
 		myen.colw=16
@@ -748,13 +766,13 @@ function spawnen(x,y,entype,enwait)
 		myen.spx=0
 		myen.ani={32,33,34,35}
 	elseif entype==2 then
-		myen.hp=2
+		myen.hp=1
 		myen.spy=.2
 		myen.spx=0
 		myen.ani={20,21,22,23}
 	else
 		--default 1
-		myen.hp=1
+		myen.hp=2
 		myen.spy=.21
 		myen.spx=0
 		myen.ani={16,17,18,19}
@@ -786,12 +804,55 @@ function doenemy(myen)
 		
  elseif myen.mission=="attac" then  
   -- suicide attack
-  if myen.boss then
-  --special attack
-  else 
-  --suicide attack
-	  myen.y+=1
+  if myen.type==1 then
+  --basic suicide attack
+	  myen.sy=1.7
+	  myen.sx=sin(t/45)
+	  -- push from edges
+	  if myen.x<32 then
+	  	myen.sx+=1-(myen.x/32)
+	  end
+	  if myen.x>88 then
+	  	myen.sx-=(myen.x-88)/32
+	  end
+  elseif myen.type==2 then
+ 	 --fast trooper
+	  myen.sy=2.5
+	  myen.sx=sin(t/20)
+	  -- push from edges
+	  if myen.x<32 then
+	  	myen.sx+=1-(myen.x/32)
+	  end
+	  if myen.x>88 then
+	  	myen.sx-=(myen.x-88)/32
+	  end
+  elseif myen.type==3 then
+   --sideway attacking beast
+  	if myen.sx==0 then --mode
+  	--flying down
+  		myen.sy=1
+  		if (pl.y)<=myen.y then
+ 		--flying horizontally
+ 				myen.sy=0
+  			if pl.x<myen.x then
+  				myen.sx-=1
+  			else
+  				myen.sx+=1
+  			end
+  		end
+  	end
+  elseif myen.type==6 then
+  --big boy
+	  myen.sy=0.35
+	  if myen.y>100 then
+	  	myen.sy=1
+	  end
+  else
+  --fixme:boss
+
+  
 	 end
+  move(myen)
  end
 end
 
@@ -810,9 +871,14 @@ function enpick()
 		
 		if myen.mission=="protec" then
 			myen.mission="attac"
+			myen.wait=60
+			myen.shake=60
+			myen.anispd=.4
 		end
 	end
 end
+
+
 __gfx__
 00000000000660000006600000066000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000097900979
 000000000007d0000707607000076000000000000000000000000000000000000282820002828200000000000000000000000000000000000028820077700777
