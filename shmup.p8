@@ -54,7 +54,7 @@ function startgame()
 	mode="wavetext"
 	flash=0
 	firet=0
-	wave=4
+	wave=0
 	nextwave()
 	wavet=160
 	nextfire=300
@@ -649,8 +649,8 @@ function draw_game()
  draw_menu()
  
  --debug
- print(t,2,102,15)
- print(#ebl)
+ --print(t,2,102,15)
+ --print(#ebl)
 end
 
 function draw_wavetext()
