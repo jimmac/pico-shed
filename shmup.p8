@@ -13,6 +13,8 @@ function _init()
  btnrelease=true
 	mode="start"
 	music(0)
+	lockout=0
+	t=0
 end
 
 function _update60 ()
@@ -51,8 +53,8 @@ function startgame()
 	mode="wavetext"
 	flash=0
 	firet=0
-	fr=0 --framecounter
 	wave=0
+	nextwave()
 	wavet=160
 	--player
 	pl=makespr()
@@ -82,10 +84,7 @@ function startgame()
 		newstar.y=flr(rnd(128))
 		newstar.s=rnd(1.5)+0.5
 		add(stars,newstar)
-	end
-	
-	--enemy waves
-	wave=0
+	end	
 end
 -->8
 --tools
@@ -294,9 +293,13 @@ function makespr()
 	
 	return myspr
 end
+
+
 -->8
 --update
 function update_game()
+	t+=1
+	
  --starfield
  update_stars()
  
@@ -348,8 +351,8 @@ function update_game()
 		end
 	end
 	-- spawn enemies
-	if #en==0 then
-		spawnwave()
+ if mode=="game" and #en==0 then
+		nextwave()
 	end
 	
 	--collision pl x en
@@ -430,9 +433,11 @@ end
 
 function update_wavetext()
 	update_game()
-	wavet-=1
+	wavet-=1	
+
 	if wavet<=0 then
 		mode="game"
+		spawnwave()
 	end
 end
 
@@ -493,7 +498,6 @@ end
 
 function draw_game()
 	cls(0)
-	fr+=1
 	--starfield
 	draw_stars()
 
@@ -506,7 +510,7 @@ function draw_game()
 	 	spr(flame,pl.x,pl.y+5)
 	 else
 	  --invulnerable state
-	  if sin(fr/10)<0.1 then
+	  if sin(t/10)<0.1 then
 		  drwspr(pl)
 		  spr(flame,pl.x,pl.y+5)
 		 end
@@ -573,6 +577,10 @@ function draw_game()
 	
  --top menu
  draw_menu()
+ 
+ --debug
+ print(t,2,2,15)
+ print(wavet)
 end
 
 function draw_wavetext()
@@ -623,18 +631,54 @@ function draw_stars()
   end
 end
 -->8
-function spawnwave()
+function nextwave()
+ wave+=1
+ 
+ if wave>5 then
+	 mode="youwin"
+	 lockout=t+30
+	 music(24)
+ else --waves
+ 	mode="wavetext"
+ 	wavet=160
+ end
+end
 
- if wave<=5 then
- 	--normal waves
-		wave+=1 wavet=160
-		mode="wavetext"
-		music(24)
-		--fixme
-		spawnen(50,20,wave)
-	else --win
-		mode="youwin"
-		music(32)
+function spawnwave()
+	--wave editor
+	if wave==1 then
+		placen({
+			{1,1,1,1,1,1,1,1,1,1},
+			{1,1,1,1,1,1,1,1,1,1}
+		})
+	elseif wave==2 then
+		placen({
+			{3,3,3,3,3,3,3,3,3,3},
+			{2,2,2,2,2,2,2,2,2,2},
+			{1,1,1,1,1,1,1,1,1,1}
+		})
+	elseif wave==3 then
+		placen({
+			{4,4,4,4,4,4,4,4,4,4},
+			{5,5,5,5,5,5,5,5,5,5},
+			{5,5,5,5,5,5,5,5,5,5},
+			{4,4,4,4,4,4,4,4,4,4}
+		})
+	elseif wave==4 then --boss
+		placen({
+			{0,0,0,0,6,0,0,0,0,0}
+		})
+	end
+end
+
+function placen(mywave)
+ 
+	for i=1,#mywave do --rows
+		for j=1,#mywave[i] do --columns
+			if mywave[i][j]>0 then
+				spawnen(j*10,i*10,mywave[i][j])
+			end
+		end
 	end
 end
 
@@ -664,22 +708,22 @@ function spawnen(x,y,entype)
 	elseif entype==4 then
 		myen.hp=3
 		myen.spy=.5
-		myen.spx=.15
+		myen.spx=0
 		myen.ani={36,37,38,39}
 	elseif entype==3 then
 		myen.hp=3
 		myen.spy=.2
-		myen.spx=.1
+		myen.spx=0
 		myen.ani={32,33,34,35}
 	elseif entype==2 then
 		myen.hp=2
-		myen.spy=.25
+		myen.spy=.2
 		myen.spx=0
 		myen.ani={20,21,22,23}
 	else
 		--default 1
 		myen.hp=1
-		myen.spy=.2
+		myen.spy=.21
 		myen.spx=0
 		myen.ani={16,17,18,19}
 	end
@@ -946,6 +990,7 @@ b5100000003200032000320003200032000320003200032000320003200032000320003200032000
 001000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 003000002a0501f050130500305000050000000005000000000500000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 0110000021050260502a05023050230503b000250002c000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+3f100000153501a3501e350153501a3501e350153501a3501e3501735017352173521735200300003000030000300003000030000300003000030000300003000030000300003000030000300003000030000300
 __music__
 00 14164355
 00 14164315
@@ -973,7 +1018,7 @@ __music__
 02 161b4344
 00 1f424344
 00 41424344
-00 41424344
+00 1f424344
 00 41424344
 00 41424344
 00 41424344
