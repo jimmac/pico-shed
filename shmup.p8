@@ -53,7 +53,7 @@ function startgame()
 	mode="wavetext"
 	flash=0
 	firet=0
-	wave=0
+	wave=3
 	nextwave()
 	wavet=160
 	--player
@@ -165,7 +165,7 @@ function drwspr(myspr)
  
  if myspr.shake>0 then
  	myspr.shake-=1
- 	sprx+=sin(t/17)
+ 	sprx+=sin(t/(4*3.14))
  end
 	spr(myspr.spr,sprx,spry,myspr.sprw,myspr.sprh)
 end
@@ -439,12 +439,7 @@ function update_game()
 				--and sparks
 				setoff_sparks(encx,ency)
 				if myen.hp<=0 then
-					sfx(2)
-					score+=10
-					del(en,myen)
-					--explode where it was
-					setoff_explosion(encx,ency)
-					setoff_sw(encx,ency)
+				 killen(myen)
 				end
 			end
 		end
@@ -781,6 +776,18 @@ function spawnen(x,y,entype,enwait)
  myen.mission="flyin"
 	add(en,myen)
 end
+
+function killen(myen)
+ local encx=myen.x+myen.sprw*4
+ local ency=myen.y+myen.sprh*4
+
+	sfx(2)
+	score+=10
+	del(en,myen)
+	--explode where it was
+	setoff_explosion(encx,ency)
+	setoff_sw(encx,ency)
+end
 -->8
 --behaviors
 
@@ -789,6 +796,7 @@ function doenemy(myen)
 		myen.wait-=1
 		return
 	end
+
  if myen.mission=="flyin" then
   --flying in
   --easing
@@ -802,8 +810,7 @@ function doenemy(myen)
  elseif myen.mission=="protec" then
   -- staying put
 		
- elseif myen.mission=="attac" then  
-  -- suicide attack
+ elseif myen.mission=="attac" then
   if myen.type==1 then
   --basic suicide attack
 	  myen.sy=1.7
@@ -841,6 +848,19 @@ function doenemy(myen)
   			end
   		end
   	end
+  elseif myen.type==5 then
+	  --skull
+			myen.sy=0.5
+	  if myen.y>pl.y then
+	  	myen.sy=2
+	  end
+	  if pl.x+1<myen.x then
+	  	myen.sx=-.3
+	  elseif pl.x-1>myen.x then
+	  	myen.sx=.3
+	  else
+	  	myen.sx=0
+	  end
   elseif myen.type==6 then
   --big boy
 	  myen.sy=0.35
@@ -873,7 +893,7 @@ function enpick()
 			myen.mission="attac"
 			myen.wait=60
 			myen.shake=60
-			myen.anispd=.4
+			myen.anispd=.15
 		end
 	end
 end
