@@ -53,7 +53,7 @@ function startgame()
 	mode="wavetext"
 	flash=0
 	firet=0
-	wave=3
+	wave=0
 	nextwave()
 	wavet=160
 	--player
@@ -69,6 +69,7 @@ function startgame()
 	flame=4   --spr of flame
 	
 	bl={} --bulets
+	ebl={} --enemy bullets
 	
 	en={} --enemies
 	attackfreq=120
@@ -167,6 +168,13 @@ function drwspr(myspr)
  	myspr.shake-=1
  	sprx+=sin(t/(4*3.14))
  end
+ 
+ --fake hitbox for ebullets
+ if myspr.bulmode then
+ 	sprx-=2
+ 	spry-=2
+ end
+ 
 	spr(myspr.spr,sprx,spry,myspr.sprw,myspr.sprh)
 end
 
@@ -283,6 +291,7 @@ function spawn_bullet(x,y,spr)
 	
 	newbl.x=x
 	newbl.y=y
+	newbl.sy=-2
 	newbl.spr=spr
 	add(bl,newbl)
 end
@@ -310,6 +319,15 @@ function move(obj)
   obj.y+=obj.sy
 end
 
+function animate(myen)
+	--sprite animation
+	myen.spr=myen.ani[flr(myen.aniframe)]
+	myen.aniframe+=myen.anispd
+	
+	if (myen.aniframe>=#myen.ani+.9) then
+		myen.aniframe=1
+	end
+end
 -->8
 --update
 function update_game()
@@ -356,13 +374,8 @@ function update_game()
 	for myen in all(en) do
   --mission
   doenemy(myen)
-		--animation
-	 myen.spr=myen.ani[flr(myen.aniframe)]
-		myen.aniframe+=myen.anispd
-
-	 if (myen.aniframe>=#myen.ani+.9) then
-	 	myen.aniframe=1
-	 end
+  --enemy animation
+  animate(myen)
 		-- kill offscreen enemies
 		if myen.mission!="flyin" then
 			if myen.y>150 or myen.x>170 or myen.x<-42 then
@@ -371,7 +384,7 @@ function update_game()
 		end
 	end
 	-- picking an enemy for attack
-	enpick()
+	enpicktimer()
 	
 	
 	
@@ -400,6 +413,30 @@ function update_game()
 		music(40)
 	end
 	
+	--collision pl x enemy bullets
+	if pl.inv<=0 then
+		for myebul in all(ebl) do
+			if col(myebul,pl) then
+			 local encx=myebul.x+myebul.sprw*4
+			 local ency=myebul.y+myebul.sprh*4
+			 local plcx=pl.x+pl.sprw*4
+			 local plcy=pl.y+pl.sprh*4
+				pl.lv-=1
+				pl.inv=90
+				sfx(1)
+				del(ebl,myebul)
+				setoff_explosion(plcx+rnd(10),plcy+rnd(10),"player")
+				setoff_sw(plcx,plcy)
+			end
+		end
+	end
+	pl.inv-=1
+	if pl.lv<=0 then
+		pl.inv=0 --don't flash at the end
+		mode="gameover"
+		music(40)
+	end
+	
 	--shooting
 	if btn(❎) then
 		if firet<=0 then
@@ -416,12 +453,22 @@ function update_game()
 		firet=0
 	end
 
-	--manage flying bullets
+	--move player bullets
 	for bullet in all(bl) do
-		bullet.y-=2
+		move(bullet)
 		if bullet.y<-8 then --delete offscreen bullets
 			del(bl,bullet)
 		end
+	end
+	
+	--move enemy bullets
+	for myebul in all(ebl) do
+		move(myebul)
+		
+		if myebul.y>150 or myebul.x>170 or myebul.x<-42 or myebul.y<0 then
+			del(ebl,myebul)
+		end
+		animate(myebul)
 	end
 	
 	--collision bullets vs enemies
@@ -589,13 +636,18 @@ function draw_game()
 	for mybul in all(bl) do
 		drwspr(mybul)
 	end
+
+	--drawing enemy bullets
+	for myebul in all(ebl) do
+		drwspr(myebul)
+	end
 	
  --top menu
  draw_menu()
  
  --debug
  print(t,2,102,15)
- print(attackfreq)
+ print(#ebl)
 end
 
 function draw_wavetext()
@@ -708,6 +760,22 @@ function spawnwave()
 	end
 end
 
+function efire(myen)
+	local myebul=makespr()
+	
+	myebul.spr=14
+	myebul.x=myen.x
+	myebul.y=myen.y
+	myebul.spr=14
+	myebul.ani={14,30,31,30,14}
+	myebul.anispd=.1
+	myebul.sy=.5
+	myebul.colw=2
+	myebul.colh=2
+	myebul.bulmode=true
+	add(ebl,myebul)
+end
+
 function placen(mywave)
  
 	for i=1,#mywave do --rows
@@ -783,10 +851,14 @@ function killen(myen)
 
 	sfx(2)
 	score+=10
+	if myen.mission=="attac" then
+		pickattac()
+	end
 	del(en,myen)
 	--explode where it was
 	setoff_explosion(encx,ency)
 	setoff_sw(encx,ency)
+	
 end
 -->8
 --behaviors
@@ -876,44 +948,48 @@ function doenemy(myen)
  end
 end
 
-function enpick()
+function enpicktimer()
 
  if mode!="game" then
  	return
  end
  local myen=rnd(en)
 	if t%attackfreq==0 then
-	 --pick something from the tail of
-	 --the grid
-		local maxnum=min(8,#en)
-		local myindex=#en-flr(rnd(maxnum))
-		local myen=en[myindex]
-		
-		if myen.mission=="protec" then
-			myen.mission="attac"
-			myen.wait=60
-			myen.shake=60
-			myen.anispd=.15
-		end
+	 pickattac()
 	end
 end
 
+function pickattac()
+	--pick something from the tail of
+	--the grid
+	local maxnum=min(8,#en)
+	local myindex=#en-flr(rnd(maxnum))
+	local myen=en[myindex]
+	
+	if myen.mission=="protec" then
+		--myen.mission="attac"
+		--myen.wait=60
+		--myen.shake=60
+		--myen.anispd=.15
+		efire(myen)
+	end
+end
 
 __gfx__
-00000000000660000006600000066000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000097900979
-000000000007d0000707607000076000000000000000000000000000000000000282820002828200000000000000000000000000000000000028820077700777
-0000000000c6d0000d6c16d00007dc0000000000000000000000000000000000080808000888880000000000000000000000000000000000028a9820a7a00a7a
-0000000000c6d0000d6c16d000077c000c7777c000c77c0000c77c00001dd10008000800088888000a7777a000a77a0000a77a000018810008aa9880a7a00a7a
-000000000dd6d000d667df6d00077d600dccccd000dccd0000dccd0000011000028082000288820009aaaa90009aa900009aa9000001100008998980aaa00aaa
-000000006dd6d0006667d6f600077d6601dddd1000dccd00001dd10000000000002820000028200002888820009aa900008998000000000002889920aaa00aaa
-000000006dddd00066d22f6f000777d600000000001dd1000001100000000000000000000000000000000000008998000028820000000000002882009a9009a9
+00000000000660000006600000066000000000000000000000000000000000000000000000000000000000000000000000000000000000000222200097900979
+000000000007d00007076070000760000000000000000000000000000000000002828200028282000000000000000000000000000000000028dd820077700777
+0000000000c6d0000d6c16d00007dc00000000000000000000000000000000000808080008888800000000000000000000000000000000002d22d200a7a00a7a
+0000000000c6d0000d6c16d000077c000c7777c000c77c0000c77c00001dd10008000800088888000a7777a000a77a0000a77a00001881002d22d200a7a00a7a
+000000000dd6d000d667df6d00077d600dccccd000dccd0000dccd0000011000028082000288820009aaaa90009aa900009aa9000001100028dd8200aaa00aaa
+000000006dd6d0006667d6f600077d6601dddd1000dccd00001dd10000000000002820000028200002888820009aa900008998000000000002222000aaa00aaa
+000000006dddd00066d22f6f000777d600000000001dd1000001100000000000000000000000000000000000008998000028820000000000000000009a9009a9
 00000000000cc00002dccd20000cdd00000000000001100000000000000000000000000000000000000000000028820000000000000000000000000009000090
-00000000000000000000000000000000022029280220292802202928022029280000000000000000000000000000000000000000000000000000000000000000
-01111110011111100111111001111110229928882299288822992888229928880000000000000000000000000000000000000000000000000000000000000000
-0ccdddd00ccdddd00ccdddd00ccdddd0299882822998828229988282299882820000000000000000000000000000000000000000000000000000000000000000
-0c1111d00c1111d00c1111d00c1111d0911112229111122291111222911112220008000000000000000800000000000000080000000000000000000000000000
-1c7177d11c7dd7d11c7717dd1c7dd7d1961661689661661896166168961661680008800000008000000880000000800000088000000080000000000000000000
-115775111157751d1157751d1157751d997777999977779999777799997777990000888800080000000088880008000000008888000800000000000000000000
+00000000000000000000000000000000022029280220292802202928022029280000000000000000000000000000000000000000000000000222200002222000
+011111100111111001111110011111102299288822992888229928882299288800000000000000000000000000000000000000000000000028ee820028998200
+0ccdddd00ccdddd00ccdddd00ccdddd0299882822998828229988282299882820000000000000000000000000000000000000000000000002e22e20029229200
+0c1111d00c1111d00c1111d00c1111d0911112229111122291111222911112220008000000000000000800000000000000080000000000002e22e20029229200
+1c7177d11c7dd7d11c7717dd1c7dd7d19616616896616618961661689616616800088000000080000008800000008000000880000000800028ee820028998200
+115775111157751d1157751d1157751d997777999977779999777799997777990000888800080000000088880008000000008888000800000222200002222000
 c1ccdd1dc1ccdd1dc1ccdd11c1ccdd1d229988222299882222998822229988220000008888800000000000888880000000000088888000000000000000000000
 c011110dc0111100c0111100c0111101022222200222222002222220022222200000008888000000000000888800000000000088880000000000000000000000
 0000000000000000000000000000000000111100001111000011110000111100000008888800000000000888a80000000000088a880000000000000000000000
