@@ -56,6 +56,7 @@ function startgame()
 	wave=0
 	nextwave()
 	wavet=160
+	nextfire=300
 	--player
 	pl=makespr()
 	pl.x=63
@@ -960,7 +961,10 @@ function enpicktimer()
  local myen=rnd(en)
 	if t%attackfreq==0 then
 	 pickattac()
-	 pickfire()
+	end
+	if t>nextfire then
+		pickfire()
+		nextfire=t+20+rnd(100*(1/wave))
 	end
 end
 
