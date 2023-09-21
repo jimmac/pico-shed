@@ -53,6 +53,7 @@ function _draw ()
 end
 
 function startgame()
+	camera(0,0)
 	mode="wavetext"
 	flash=0
 	firet=0
@@ -664,8 +665,6 @@ function draw_game()
  if shaket>0 then
  	camera(sin(t/10)*shakex,cos(t/5)*shakex)
  	shaket-=1
- else
- 	camera(0,0)
  end
  
  --debug
@@ -702,6 +701,7 @@ function draw_gameover()
 end
 
 function draw_youwin()
+	camera(0,0) --might be offset
  draw_bgpattern()
  spr(160,48,34,5,5)
 	print("\14 player wins!",31,85+sin(t/90)*2,13)
