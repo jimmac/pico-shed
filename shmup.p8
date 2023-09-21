@@ -15,6 +15,8 @@ function _init()
 	music(0)
 	lockout=0
 	t=0
+	shaket=0
+	shakex=0
 end
 
 function _update60 ()
@@ -55,6 +57,7 @@ function startgame()
 	flash=0
 	firet=0
 	wave=4
+	lastwave=6
 	nextwave()
 	wavet=160
 	nextfire=300
@@ -68,6 +71,7 @@ function startgame()
 	pl.lv=3   --number of lives
 	pl.inv=0  --invincibility 
 	          -- frames
+	pl.deathshake=3
 	flame=4   --spr of flame
 	
 	bl={} --bulets
@@ -330,6 +334,11 @@ function animate(myen)
 		myen.aniframe=1
 	end
 end
+
+function screenshake(obj)
+	shaket=60
+	shakex=obj.deathshake
+end
 -->8
 --update
 function update_game()
@@ -404,6 +413,7 @@ function update_game()
 				setoff_explosion(encx-rnd(10),ency-rnd(10))
 				setoff_explosion(plcx+rnd(10),plcy+rnd(10),"player")
 				setoff_sw(plcx,plcy)
+				screenshake(pl)
 			end
 		end
 	end
@@ -428,6 +438,7 @@ function update_game()
 				del(ebl,myebul)
 				setoff_explosion(plcx+rnd(10),plcy+rnd(10),"player")
 				setoff_sw(plcx,plcy)
+				screenshake(pl)
 			end
 		end
 	end
@@ -488,6 +499,7 @@ function update_game()
 				setoff_sparks(encx,ency)
 				if myen.hp<=0 then
 				 killen(myen)
+				 screenshake(myen)
 				end
 			end
 		end
@@ -648,6 +660,14 @@ function draw_game()
  --top menu
  draw_menu()
  
+ --shake screen
+ if shaket>0 then
+ 	camera(sin(t/10)*shakex,cos(t/5)*shakex)
+ 	shaket-=1
+ else
+ 	camera(0,0)
+ end
+ 
  --debug
  print(t,2,102,15)
  --print(#ebl)
@@ -718,7 +738,7 @@ end
 function nextwave()
  wave+=1
  
- if wave>6 then
+ if wave>lastwave then
 	 mode="youwin"
 	 lockout=t+30
 	 music(24)
@@ -766,23 +786,22 @@ function spawnwave()
 		sfx(34)		
 	elseif wave==5 then --miniboss
 		placen({
-		 {1,1,0,0,0,0,0,0,1,1},
+		 {0,0,0,0,0,0,0,0,0,0},
 			{0,0,0,0,6,0,0,0,0,0},
-			{1,1,0,0,0,0,0,0,1,1}
+			{2,2,0,0,0,0,0,0,2,2}
 		})
 		sfx(35)
 	else --boss
 		placen({
 			{0,0,0,0,0,0,0,1,1,1}
 		})
-		sfx(35)
+		sfx(36)
 	end
 end
 
 function efire(myen,ang,spd)
 	local myebul=makespr()
-
-	
+		
 	myebul.spr=14
 	myebul.x=myen.x+3*myen.sprw
 	myebul.y=myen.y+6*myen.sprh
@@ -805,6 +824,11 @@ function efirespread(myen,num,spd)
  for i=1,num do
  	efire(myen,(1/num)*i+offset,spd)
  end
+end
+
+function aimedfire(myen,spd)
+ local ang=atan2(pl.y-myen.y,pl.x-myen.x)
+	efire(myen,ang,spd)
 end
 
 function placen(mywave)
@@ -831,6 +855,7 @@ function spawnen(x,y,entype,enwait)
 	myen.wait=enwait
 	myen.type=entype
 	myen.anispd=.1
+	myen.deathshake=0
 			
 	myen.aniframe=1+rnd(4) --first frame of animation	
 	if entype==6 then
@@ -843,12 +868,14 @@ function spawnen(x,y,entype,enwait)
 		myen.spy=.1
 		myen.spx=1
 		myen.ani={24,26,28}
+		myen.deathshake=2
 	elseif entype==5 then
 		--skull
 		myen.hp=4
 		myen.spy=.2
 		myen.spx=0
 		myen.ani={48,49,50,51}
+		myen.deathshake=1
 	elseif entype==4 then
 		myen.hp=3
 		myen.spy=.5
@@ -1021,10 +1048,19 @@ function pickfire()
 	local maxnum=min(8,#en)
 	local myindex=#en-flr(rnd(maxnum))
 	local myen=en[myindex]
-	
-	if myen.mission=="protec" then
-		efire(myen,0,1) --default down
-	end
+
+if myen.mission=="protec" then
+  if myen.type==6 then
+   --miniboss
+   efirespread(myen,8,1.3,rnd())
+  elseif myen.type==2 then
+   --fast skull
+   aimedfire(myen,2)
+  else
+  	--default fire type
+   efire(myen,0,1)
+  end
+ end	
 end
 __gfx__
 00000000000660000006600000066000000000000000000000000000000000000000000000000000000000000000000000000000000000000222200097900979
@@ -1268,8 +1304,6 @@ dedededeeeeeeeeededededededededededededeeeeeeeeededededeeeeeeeeedededededededede
 ededededededededededededededededeeeeeeeeedededededededededededededededededededededededededededededededededededededededededededed
 dedededeeeeeeeeededededeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeededededeeeeeeeeededededededededeeeeeeeeededededededededeeeeeeeee
 
-__map__
-0000000000000000000000900000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __sfx__
 000200002261028420016000060000600026000560010600006000060000600006000060000600006000060000600006000060000600006000060000600006000060000000000000000000000000000000000000
 00020000266560d6163165612656376560c65025650096500965007650076500765007650076500865008650086500865008650086500865008650096500d6500f650136401b6402063026630286202c61030610
@@ -1306,7 +1340,8 @@ b4100000003100031000310003100031000310003100031000310003100031000310003100031000
 3f100000153501a3501e350153501a3501e350153501a3501e3501735017352173521735200300003000030000300003000030000300003000030000300003000030000300003000030000300003000030000300
 d71000000000000000003540c35000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 8f100000002540c2500c2500c25200402004000040000400004000040000400004000040000400004000040000400004000040000400004000040000400004000040000400004000040000400004000000000000
-3f090000002540c250002540c250002540c2500c2520c2520c2520c25200200002000020000200002000020000200002000020000200002000020000200002000020000200002000020000200002000000000000
+3e090000002540c250002540c250002540c2500c2520c2520c2520c25200200002000020000200002000020000200002000020000200002000020000200002000020000200002000020000200002000000000000
+3f0a0000002540c250002540c250002540c2500c2520c2520c2520c25200254082500825208252082520825405250052520525205252052520525205252052520525205252052520525205254000000000000000
 __music__
 00 14164355
 00 14164315
