@@ -54,7 +54,7 @@ function startgame()
 	mode="wavetext"
 	flash=0
 	firet=0
-	wave=0
+	wave=4
 	nextwave()
 	wavet=160
 	nextfire=300
@@ -718,7 +718,7 @@ end
 function nextwave()
  wave+=1
  
- if wave>5 then
+ if wave>6 then
 	 mode="youwin"
 	 lockout=t+30
 	 music(24)
@@ -769,6 +769,11 @@ function spawnwave()
 		 {1,1,0,0,0,0,0,0,1,1},
 			{0,0,0,0,6,0,0,0,0,0},
 			{1,1,0,0,0,0,0,0,1,1}
+		})
+		sfx(35)
+	else --boss
+		placen({
+			{0,0,0,0,0,0,0,1,1,1}
 		})
 		sfx(35)
 	end
@@ -965,8 +970,8 @@ function doenemy(myen)
   --miniboss
 	  myen.sy=0.1
 	  if t>nextfire then
- 	  nextfire=t+20
-		  efirespread(myen,8,1)
+ 	  nextfire=t+30
+		  efirespread(myen,8,.8)
 			end  
 	  if myen.y>100 then
 	  	myen.sy=1
@@ -1019,7 +1024,6 @@ function pickfire()
 	
 	if myen.mission=="protec" then
 		efire(myen,0,1) --default down
-		--efirespread(myen,8,1)
 	end
 end
 __gfx__
