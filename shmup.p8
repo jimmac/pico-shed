@@ -15,8 +15,6 @@ function _init()
 	music(0)
 	lockout=0
 	t=0
-	shaket=0
-	shakex=0
 end
 
 function _update60 ()
@@ -54,6 +52,8 @@ end
 
 function startgame()
 	camera(0,0)
+	shaket=0
+	shakex=0
 	mode="wavetext"
 	flash=0
 	firet=0
@@ -665,6 +665,8 @@ function draw_game()
  if shaket>0 then
  	camera(sin(t/10)*shakex,cos(t/5)*shakex)
  	shaket-=1
+ else
+ 	camera(0,0)
  end
  
  --debug
