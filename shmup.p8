@@ -57,7 +57,7 @@ function startgame()
 	mode="wavetext"
 	flash=0
 	firet=0
-	wave=4
+	wave=0
 	lastwave=6
 	nextwave()
 	wavet=160
@@ -751,8 +751,8 @@ function nextwave()
 end
 
 function spawnwave()
-	--wave editor
 	if wave==1 then
+	 --simple
 		placen({
 			{1,1,1,1,1,1,1,1,1,1},
 			{0,1,1,1,1,1,1,1,1,0},
@@ -761,29 +761,32 @@ function spawnwave()
 		})
 		sfx(33)
 	elseif wave==2 then
+	 --some suiciders
 	 attackfreq=90
 		placen({
-			{1,1,1,0,2,2,0,1,1,1},
-			{1,1,1,0,2,2,0,1,1,1},
-			{1,1,1,0,2,2,0,1,1,1},
-			{1,1,1,0,2,2,0,1,1,1}
+			{2,2,1,1,2,2,1,1,2,2},
+			{2,2,1,1,2,2,1,1,2,2},
+			{2,2,1,1,2,2,1,1,2,2},
+			{2,2,2,2,2,2,2,2,2,2}
 		})
 		sfx(33)
 	elseif wave==3 then
+	 --some sideway attackers
 	 attackfreq=60
 		placen({
-			{0,3,3,3,0,0,0,3,3,0},
-			{3,4,4,4,3,3,4,4,4,3},
-			{3,4,4,4,3,3,4,4,4,3},
-			{0,3,3,3,0,0,3,3,3,0}
+			{3,1,1,1,0,0,1,1,1,3},
+			{3,3,4,4,0,0,4,4,3,3},
+			{3,3,4,4,0,0,4,4,3,3},
+			{3,3,1,1,0,0,1,1,3,3}
 		})
 		sfx(34)
 	elseif wave==4 then
+	 --skulls with aimers
 		placen({
 			{5,5,5,5,0,0,5,5,5,5},
 			{5,5,5,5,0,0,5,5,5,5},
-			{1,5,5,1,0,0,1,5,5,1},
-			{1,1,1,1,0,0,1,1,1,1}
+			{2,5,5,2,0,0,2,5,5,2},
+			{2,2,2,2,0,0,2,2,2,2}
 		})
 		sfx(34)		
 	elseif wave==5 then --miniboss
@@ -870,14 +873,14 @@ function spawnen(x,y,entype,enwait)
 		myen.spy=.1
 		myen.spx=1
 		myen.ani={24,26,28}
-		myen.deathshake=2
+		myen.deathshake=0
 	elseif entype==5 then
 		--skull
 		myen.hp=4
 		myen.spy=.2
 		myen.spx=0
 		myen.ani={48,49,50,51}
-		myen.deathshake=1
+		myen.deathshake=.01
 	elseif entype==4 then
 		myen.hp=3
 		myen.spy=.5
