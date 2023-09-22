@@ -127,7 +127,6 @@ function startgame()
 	for i=0,7 do
 		add(mapsegs,{tx=i*16,ty=0})
 	end
-	printh(#mapsegs)
 end
 -->8
 --tools
@@ -400,9 +399,9 @@ function draw_stars()
    local mystar=stars[i]
   	local scol=6
   	
-  	if mystar.s<.3 then
+  	if mystar.s<.6 then
   		scol=1
-  	elseif mystar.s<.5 then
+  	elseif mystar.s<.8 then
   		scol=13
   	end
   	
@@ -413,8 +412,6 @@ end
 function draw_bossship()
 	for i=1,#mapsegs do
 		local mapseg=mapsegs[i]
-		printh("i "..i)
-		printh("tx "..mapseg.tx)
 		local segx=mapscroll-(i-1)*256
 		map(mapseg.tx,mapseg.ty,0,segx,16,32)
 	end
