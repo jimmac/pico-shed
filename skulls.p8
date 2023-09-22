@@ -576,7 +576,7 @@ function update_game()
 				local encx=myen.x+myen.sprw*4
 			 local ency=myen.y+myen.sprh*4
 			 local enby=myen.y+myen.sprh*8-4
-				setoff_sw(encx,ency,2)
+				setoff_sw(bullet.x+3,enby,1)
 				--and sparks from bottom
 				setoff_sparks(bullet.x+3,enby)
 				if myen.hp<=0 then
