@@ -19,6 +19,10 @@ __lua__
 	-- delayed wave label 
 	   --transition
 	-- special boss music
+	-- end stats -- ens killed
+	             -- time
+	             -- shots fired
+	             -- lives lost
 
 function _init()
  --custom font
