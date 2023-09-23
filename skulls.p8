@@ -133,7 +133,8 @@ end
 
 
 function draw_menu ()
-	rectfill(0,0,128,7,0)
+	--bg
+	--rectfill(0,0,128,7,0)
 
  
  --score
