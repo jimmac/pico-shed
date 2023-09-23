@@ -1117,10 +1117,10 @@ function killen(myen)
 	if myen.mission=="attac" then
 		pickattac()
 	end
+	setoff_sw(encx,ency,5)
 	setoff_explosion(encx,ency,nil)
 	del(en,myen)
 	--miniboss
-
 	if myen.type==6 then
 		--explode where it was
 		setoff_explosion(encx,ency,nil,10)
