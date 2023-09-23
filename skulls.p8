@@ -150,9 +150,11 @@ function draw_menu ()
  end
 end
 
-function bang() --muzzle flash
+function drw_muzzle() --muzzle flash
   if flash>0 then
-   circfill(pl.x+3,pl.y-3,flash,7)
+   circfill(pl.x+1,pl.y-1,flash,7)
+   circfill(pl.x+6,pl.y-1,flash,7)
+   flash-=1
    flash-=1
   end
 end
@@ -550,7 +552,7 @@ function update_game()
 			sfx(0)
 			spawn_bullet(pl.x,pl.y-3)
 	 	firet=2 --frames between shots
-		 flash=7 --size of the muzzleflash resets
+		 flash=5 --size of the muzzleflash resets
 		else
 			firet-=1
 		end
@@ -782,7 +784,7 @@ function draw_game()
 	end
 	
 
-	bang() --show muzzle flash
+	drw_muzzle() --show muzzle flash
 
  --big explosion--
 
@@ -924,7 +926,7 @@ function spawnwave()
 		sfx(33)
 	elseif wave==2 then
 	 --some suiciders
-	 attackfreq=90
+	 attackfreq=30
 		placen({
 			{2,2,1,1,2,2,1,1,2,2},
 			{2,2,1,1,2,2,1,1,2,2},
@@ -932,8 +934,7 @@ function spawnwave()
 		})
 		sfx(33)
 	elseif wave==3 then
-	 --some sideway attackers
-	 --some eyes shooting
+	 --introduce sideway attackers
 	 attackfreq=60
 		placen({
 			{3,3,3,0,0,0,0,3,3,3},
@@ -1077,7 +1078,7 @@ function spawnen(x,y,entype,enwait)
 		myen.hp=10
 		myen.sy=0 --stays but shoots
 		myen.sx=0
-		myen.ani={36,37,38,39}
+		myen.ani={36,37,38,39,38,37}
 	elseif entype==3 then
 		myen.hp=3
 		myen.sy=.2
@@ -1194,7 +1195,7 @@ function doenemy(myen)
 	  end
   elseif myen.type==2 then
  	 --fast trooper
-	  myen.sy=2.5
+	  myen.sy=1
 	  myen.sx=sin(t/20)
 	  -- push from edges
 	  if myen.x<32 then
@@ -1218,6 +1219,12 @@ function doenemy(myen)
   			end
   		end
   	end
+  elseif myen.type==4 then  	
+  --eye shoots
+  if t%90==0 then
+  	efirespread(myen,4,.8,-(t/1000))
+  end
+
   elseif myen.type==5 then
 	  --skull
 			myen.sy=0.5
