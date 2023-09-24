@@ -61,8 +61,8 @@ function startgame()
 	--mode="wavetext"
 	flash=0
 	firet=0
-	wave=5
-	lastwave=6
+	wave=0
+	lastwave=7
 	nextwave()
 	wavet=160
 	nextfire=300
