@@ -28,6 +28,8 @@ function _init()
 	mode="start"
 	music(0)
 	lockout=0
+ cartdata("jimmac_skullbuster")
+ topscore = dget(0)
 	t=0
 	debug=true
 
@@ -135,9 +137,12 @@ function draw_menu ()
 
  
  --score
- palt(0,false)
- print("score: "..score,50,1,6)
- palt()
+ local stringscore=0
+ if score>0 then
+ 	stringscore=score.."00"
+ end
+ print("score: "..stringscore,50,1,6)
+
  --lives
  for i=1,5 do 
   if i<=pl.lv then h=9 else h=8 end
@@ -880,7 +885,12 @@ function draw_youwin()
  spr(76,48,18,4,4)
 	print("\14 player wins!",31,60+sin(t/90)*2,13)
 	print("\14 player wins!",31,55+sin(t/100)*4,7)
-	print("final score: "..score,34,74,7)
+	if score>0 then
+		local stringscore=score.."00"
+	end
+	print("final score: "..stringscore,34,74,7)
+	print("record score: "..topscore.."00",30,80,6)
+	
 	print("press 🅾️", 48,100,blink())
 end
 
@@ -906,6 +916,10 @@ function nextwave()
   if t>=allgone then
   -- go to endscreen
 	  music(56)
+	  if score>topscore then
+	  	topscore=score
+	  	dset(0,topscore)
+	  end
 		 mode="youwin"
 		 lockout=t+60
 		else
@@ -1054,6 +1068,7 @@ function spawnen(x,y,entype,enwait)
 		myen.colw=32
 		myen.colh=32
 		myen.hp=300
+		myen.points=10
 		myen.sy=0
 		myen.sx=0
 		myen.ani={132,136,140,136}
@@ -1065,6 +1080,7 @@ function spawnen(x,y,entype,enwait)
 		myen.colw=16
 		myen.colh=16
 		myen.hp=100
+		myen.points=5
 		myen.sy=.1
 		myen.sx=0
 		myen.ani={24,26,28}
@@ -1072,6 +1088,7 @@ function spawnen(x,y,entype,enwait)
 	elseif entype==5 then
 		--skull
 		myen.hp=8
+		myen.points=3
 		myen.sy=.2
 		myen.sx=0
 		myen.ani={48,49,50,51}
@@ -1082,19 +1099,23 @@ function spawnen(x,y,entype,enwait)
 		myen.sy=0 --stays but shoots
 		myen.sx=0
 		myen.ani={36,37,38,39,38,37}
+		myen.points=2
 	elseif entype==3 then
 		myen.hp=3
+		myen.points=1
 		myen.sy=.2
 		myen.sx=0
 		myen.ani={32,33,34,35}
 	elseif entype==2 then
 		myen.hp=6
+		myen.points=1
 		myen.sy=.2
 		myen.sx=0
 		myen.ani={20,21,22,23}
 	else
 		--default 1
 		myen.hp=4
+		myen.points=1
 		myen.sy=.21
 		myen.sx=0
 		myen.ani={16,17,18,19}
@@ -1117,16 +1138,24 @@ function killen(myen)
  local ency=myen.y+myen.sprh*4
 
 	sfx(2)
-	score+=10
+
+	--if killed is attaching
+	--score double and spawn 
+	--another
 	if myen.mission=="attac" then
 		pickattac()
+		score+=myen.points*2
+	else
+		score+=myen.points
 	end
+	
+	--explode
 	setoff_sw(encx,ency,5)
 	setoff_explosion(encx,ency,nil)
 	del(en,myen)
 	--miniboss
 	if myen.type==6 then
-		--explode where it was
+		--explode extra where it was
 		setoff_explosion(encx,ency,nil,10)
 		setoff_sw(encx,ency)
 		--give pickup on special occ
@@ -1173,7 +1202,6 @@ function doenemy(myen)
  	
  elseif myen.mission=="protec" then
   -- staying put
- printh("xxag "..allgone)
  elseif myen.mission=="boss1" then
  	doboss1(myen)
  elseif myen.mission=="boss2" then
@@ -1476,10 +1504,10 @@ function doboss5(myen)
 	
 	--end it
  if myen.phbegin+4*60<t then
- 	score+=10
  	allgone=t+360
  	sfx(32)
   setoff_sw(myen.x+16,myen.y+16)
+  score+=myen.points
  	en={}
 	end
 end
