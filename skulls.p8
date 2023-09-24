@@ -112,6 +112,8 @@ function startgame()
 	
 	pickups={} --upgrades for a boss
 	
+	mults={} --attac multipliers
+	
 	mapscroll=0 --boss map offset
 	
 	--starfield
@@ -448,6 +450,17 @@ function draw_deadens()
 		end
 	end
 end
+
+function spawn_mult(x,y)
+	local mymult=makespr()
+	
+	mymult.x=x
+	mymult.y=y
+	mymult.life=60
+	mymult.sy=-1
+	
+	add(mults,mymult)
+end
 -->8
 --update
 function update_game()
@@ -629,6 +642,18 @@ function update_game()
 			del(pickups,mypick)
 		end
 		--animate(mypick)
+	end
+	
+	--multiplicator bonuses
+	for mymult in all(mults) do
+		mymult.life-=1
+		if mymult.life>=0 then
+		 mymult.sy*=.9--dampen speed
+			mymult.y+=mymult.sy
+	 else
+	 	--remove
+	 	del(mults,mymult)
+		end
 	end
 	
 	--collision bullets vs enemies
@@ -841,6 +866,11 @@ function draw_game()
 	--bullets
 	for mybul in all(bl) do
 		drwspr(mybul)
+	end
+
+	--bonus multiplicators
+	for mymult in all(mults) do
+		print("2x",mymult.x,mymult.y,blink())
 	end
 
 	--drawing enemy bullets
@@ -1169,6 +1199,7 @@ function killen(myen)
 	if myen.mission=="attac" then
 		pickattac()
 		score+=myen.points*2
+		spawn_mult(myen.x,myen.y)
 	else
 		score+=myen.points
 	end
