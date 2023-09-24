@@ -6,17 +6,16 @@ __lua__
 
 -- todo
 
--- make boss explosion
-	
 -- polish
-	-- animated start screen blob
-	-- delayed wave label 
-	-- special boss music
-	-- special end music
 	-- end stats -- ens killed icons
 	             -- time
 	             -- shots fired
 	             -- lives lost
+
+	-- animated start screen blob
+	-- delayed wave label 
+	-- special boss music
+	-- special end music
 
 function _init()
  --custom font
@@ -76,7 +75,7 @@ function startgame()
 	mode="wavetext"
 	flash=0
 	firet=0
-	wave=0
+	wave=5
 	lastwave=7
 	nextwave()
 	wavet=160
@@ -101,6 +100,10 @@ function startgame()
 	ebl={} --enemy bullets
 	
 	en={} --enemies
+	deaden={} --dead enemies score
+	for i=1,7 do
+		deaden[i]=0
+	end
 	attackfreq=120
 	allgone=0
 	
@@ -707,6 +710,7 @@ function update_youwin()
 		if btnp(🅾️) then
 			mode="start"
 			btnrelease=false
+			score=0
 			music(0)
 		end
 	end
@@ -885,8 +889,9 @@ function draw_youwin()
  spr(76,48,18,4,4)
 	print("\14 player wins!",31,60+sin(t/90)*2,13)
 	print("\14 player wins!",31,55+sin(t/100)*4,7)
+	stringscore=0
 	if score>0 then
-		local stringscore=score.."00"
+		stringscore=score.."00"
 	end
 	print("final score: "..stringscore,34,74,7)
 	print("record score: "..topscore.."00",30,80,6)
@@ -919,6 +924,9 @@ function nextwave()
 	  if score>topscore then
 	  	topscore=score
 	  	dset(0,topscore)
+	  end
+	  for i=1,#deaden do
+	  	printh(i..": "..deaden[i])
 	  end
 		 mode="youwin"
 		 lockout=t+60
@@ -1131,6 +1139,7 @@ function killen(myen)
   myen.phbegin=t
   myen.ghost=true
   ebl={}
+  deaden[7]=1
   sfx(51)
   return
  end
@@ -1153,6 +1162,7 @@ function killen(myen)
 	setoff_sw(encx,ency,5)
 	setoff_explosion(encx,ency,nil)
 	del(en,myen)
+	deaden[myen.type]+=1
 	--miniboss
 	if myen.type==6 then
 		--explode extra where it was
