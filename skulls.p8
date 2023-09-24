@@ -31,7 +31,6 @@ function _init()
  topscore = dget(0)
 	t=0
 	debug=false
-
 end
 
 function _update60 ()
@@ -444,8 +443,8 @@ function draw_deadens()
 			--spr(ensprs[i],54,70,2,2)
 			--print(deaden[i].."x",71,76)
 		else
-			spr(ensprs[i],(i-1)*20+16,90)
-			print(deaden[i].."x",i*20+4,91)
+			spr(ensprs[i],(i-1)*23+8,90)
+			print(deaden[i].."x",(i-1)*23+17,91)
 		end
 	end
 end
@@ -865,8 +864,10 @@ function draw_game()
  end
  
  --debug
-	print(" t:"..t,2,1,15)
-	print("ag:"..allgone)
+ if debug then
+		print(" t:"..t,2,1,15)
+		print("ag:"..allgone)
+	end
 end
 
 function draw_wavetext()
@@ -901,7 +902,9 @@ function draw_youwin()
 	camera(0,0) --might be offset
  draw_bgpattern()
  spr(76,48,16,4,4)
-	print("\14 player wins!",31,58+sin(t/90)*2,13)
+ palt(0,false)
+	print("\14 player wins!",31,52,0)
+	palt()
 	print("\14 player wins!",31,47+sin(t/100)*4,7)
 	stringscore=0
 	if score>0 then
@@ -916,8 +919,10 @@ end
 
 
 function draw_bgpattern()
-	cls(14)
- pal(1,13)
+	fillp(▒)
+	cls(1)
+	fillp()
+ pal(1,2)
 	for i=0,16 do
 		for j=0,16 do
 			spr(241+rnd(j),i*8,j*8)
