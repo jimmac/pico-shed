@@ -17,7 +17,10 @@ function _init()
  cartdata("jimmac_skullbuster")
  topscore = dget(0)
 	t=0
-	introt=2*60
+	intro={}
+	intro.t=2*60
+	intro.x1=0
+	intro.x2=110
 	debug=false
 end
 
@@ -50,7 +53,7 @@ function _draw ()
 	  draw_youwin()	  
 	 else
 		 --start
-	  if t<introt then
+	  if t<intro.t then
 	  	draw_intro()
 	  else
 		 	draw_start()
@@ -270,7 +273,7 @@ end
 
 function setoff_explosion(x,y,kind,size)
   if kind==nil then kind="generic" end
- --create particle
+ --create 50 particles
 	for i=1,50 do
 		local myp={}
 		myp.x=x
@@ -279,10 +282,8 @@ function setoff_explosion(x,y,kind,size)
 		myp.kind=kind
 
 		if size then
-
 			myp.size=size
 		else
-
 			myp.size=1+rnd(2)
 		end
 		if rnd()>0.5 then
@@ -339,18 +340,20 @@ end
 --recolor explosion particles
 function age_to_c(age,kind)
 	local colors={}
-	colors["generic"]={7,10,9,8,2}
-	colors["player"]={7,12,14,13,1}
-	if age<10 then
+	colors["generic"]={1,7,10,9,8,2}
+	colors["player"]={1,7,12,14,13,1}
+	if age<1 then
 		c=colors[kind][1]
-	elseif age<=15 then
+	elseif age<=10 then
 		c=colors[kind][2]
-	elseif age<=20 then
+	elseif age<=15 then
 		c=colors[kind][3]
-	elseif age<=25 then
+	elseif age<=20 then
 		c=colors[kind][4]
+	elseif age<=25 then
+		c=colors[kind][5]
 	else
-	 c=colors[kind][5]
+	 c=colors[kind][6]
 	end
 	
 	return c
@@ -912,9 +915,20 @@ end
 function draw_intro()
 	cls(0)
 
-	spr(52,58,50,2,1)
-	spr(54,58,58,2,1)
-	print("jimmac.eu",48,70,1)
+	--t from 1 to intro.t(120)
+	local ttx=58
+	
+	if t<30 then
+		intro.x1-=(intro.x1-ttx)/6
+		intro.x2-=(intro.x2-ttx)/6
+		spr(52,intro.x1,50,2,1)
+		spr(54,intro.x2,58,2,1)
+	else
+		spr(52,58,50,2,1)
+		spr(54,58,58,2,1)
+		print("jimmac.eu",49,72,1)
+	end
+
 end
 
 function draw_start()
