@@ -7,7 +7,7 @@ __lua__
 -- todo
 
 -- polish
-	-- end stats -- ens killed icons
+	-- end stats 
 	             -- time
 	             -- shots fired
 	             -- lives lost
@@ -72,10 +72,10 @@ function startgame()
 	shaket=0
 	shakex=0
 	explt=0
-	mode="wavetext"
+	--mode="wavetext"
 	flash=0
 	firet=0
-	wave=5
+	wave=0
 	lastwave=7
 	nextwave()
 	wavet=160
@@ -101,7 +101,7 @@ function startgame()
 	
 	en={} --enemies
 	deaden={} --dead enemies score
-	for i=1,7 do
+	for i=1,6 do
 		deaden[i]=0
 	end
 	attackfreq=120
@@ -433,6 +433,20 @@ function draw_bossship()
 		local mapseg=mapsegs[i]
 		local segx=mapscroll-(i-1)*256
 		map(mapseg.tx,mapseg.ty,0,segx,16,32)
+	end
+end
+
+function draw_deadens()
+	ensprs={16,20,32,36,48,26}
+	for i=1,#deaden do
+		if i==6 then
+		 --miniboss
+			--spr(ensprs[i],54,70,2,2)
+			--print(deaden[i].."x",71,76)
+		else
+			spr(ensprs[i],(i-1)*20+16,90)
+			print(deaden[i].."x",i*20+6,91)
+		end
 	end
 end
 -->8
@@ -886,17 +900,17 @@ end
 function draw_youwin()
 	camera(0,0) --might be offset
  draw_bgpattern()
- spr(76,48,18,4,4)
-	print("\14 player wins!",31,60+sin(t/90)*2,13)
-	print("\14 player wins!",31,55+sin(t/100)*4,7)
+ spr(76,48,16,4,4)
+	print("\14 player wins!",31,58+sin(t/90)*2,13)
+	print("\14 player wins!",31,47+sin(t/100)*4,7)
 	stringscore=0
 	if score>0 then
 		stringscore=score.."00"
 	end
-	print("final score: "..stringscore,34,74,7)
-	print("record score: "..topscore.."00",30,80,6)
-	
-	print("press 🅾️", 48,100,blink())
+	print("final score: "..stringscore,34,66,7)
+	print("record score: "..topscore.."00",30,72,6)
+	draw_deadens()
+	print("press 🅾️", 48,110,blink())
 end
 
 
@@ -924,9 +938,6 @@ function nextwave()
 	  if score>topscore then
 	  	topscore=score
 	  	dset(0,topscore)
-	  end
-	  for i=1,#deaden do
-	  	printh(i..": "..deaden[i])
 	  end
 		 mode="youwin"
 		 lockout=t+60
@@ -1139,7 +1150,6 @@ function killen(myen)
   myen.phbegin=t
   myen.ghost=true
   ebl={}
-  deaden[7]=1
   sfx(51)
   return
  end
