@@ -30,7 +30,7 @@ function _init()
  cartdata("jimmac_skullbuster")
  topscore = dget(0)
 	t=0
-	debug=true
+	debug=false
 
 end
 
@@ -445,7 +445,7 @@ function draw_deadens()
 			--print(deaden[i].."x",71,76)
 		else
 			spr(ensprs[i],(i-1)*20+16,90)
-			print(deaden[i].."x",i*20+6,91)
+			print(deaden[i].."x",i*20+4,91)
 		end
 	end
 end
