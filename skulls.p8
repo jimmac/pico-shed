@@ -21,7 +21,7 @@ function _init()
 	intro.t=2*60
 	intro.x1=0
 	intro.x2=110
-	debug=true
+	debug=false
 end
 
 function _update60 ()
@@ -916,8 +916,8 @@ function draw_game()
  
  --debug
  if debug then
-		print("\#0 t:"..t,2,1,15)
-		print("\#0 ag:"..allgone)
+		print("\#0t:"..t,2,110,15)
+		print("\#0ag:"..allgone)
 	end
 end
 
