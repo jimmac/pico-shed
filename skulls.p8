@@ -963,14 +963,22 @@ function draw_gameover()
 	fillp(▥)
 	rectfill(0,0,128,128,0)
 	fillp(▒)
-	rectfill(0,0,128,128,0)	
-	fillp() 
+	rectfill(0,0,128,128,0)
+	fillp()
  ]]--
 	draw_randstripe()
 	print("\14 game over",36,41,1)
 	print("\14 game over",36,40,7)
 
-	print("press any button", 36,101,1)	
+	stringscore=0
+	if score>0 then
+		stringscore=score.."00"
+	end
+	print("final score: "..stringscore,34,66,7)
+	print("record score: "..topscore.."00",30,72,6)
+	draw_deadens()
+
+	print("press any button", 36,101,1)
 	print("press any button", 36,100,blink())
 end
 
